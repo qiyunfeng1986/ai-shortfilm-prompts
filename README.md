@@ -1,180 +1,190 @@
-# ai-shortfilm-prompts · AI 短片提示词方法论
+# ai-shortfilm-prompts
 
-> AI 短片提示词写作的开源方法库 + 案例集 + Claude Code Skill。
-> 首发版本基于 Mx-Shell《丧尸清道夫》拆解（让好莱坞导演 PJ Ace 称为"近年最佳短片之一"的作品）。
-> 后续计划收录更多 AI 短片创作者的方法。
+> A methodology + prompt library + Claude Code Skill for writing
+> cinematic AI shortfilm prompts.
+> Built from a deep dive into Mx-Shell's *Zombie Cleaner* —
+> the AI short Hollywood director **PJ Ace** called
+> *"one of the best short films in recent years."*
 
----
-
-## 故事
-
-2026 年 5 月，**Mx-Shell**（云南玉溪人，中专学历，29 岁，已成家，摄影副业）用 **10 天** 做出 3 分钟 AI 短片《丧尸清道夫》：原子朋克机器人在末日丧尸危机后的滨海别墅，与一只呆鸵鸟相遇，跳着 1980 年代标志性舞蹈风格的霹雳舞，踢飞丧尸头颅。
-
-> 关于"3000 元成本"：网传的口径来自 Mx-Shell 本人，但他在直播里被追问时又改口为"几万 / 两万多块钱"。真实开销大概率比 3000 元高，但仍然远低于真人拍摄的同等时长短片。第一部 AI 作品是给姐姐家的云南玉溪新平希尔顿酒店做的（2026 年 1 月）。
-
-短片被好莱坞导演 **PJ Ace** 评为"近年来最佳短片之一"并全网寻找原作者。
-他事后开了两次直播，把自己写提示词的思路全部讲出来，还把当初的文档分享给了粉丝。
-
-**这个仓库是把那些原始材料整理、归纳、结构化，让你能学到他写提示词的方法。**
-
-不是教你复刻这部片子。是教你写出能做出**自己作品**的提示词。
+**[中文版 →](./README.zh.md)**
 
 ---
 
-## 这里有什么
+## The story
+
+May 2026. A 29-year-old vocational-school graduate from rural Yunnan,
+China — handle **Mx-Shell** — used **10 days** and a few thousand RMB of
+cloud credits to make a 3-minute AI short called *Zombie Cleaner*: an
+atomic-punk robot wanders into a beachfront villa after a zombie
+apocalypse, meets a confused ostrich, and starts dancing
+1980s-style breakdance moves while kicking a zombie's head across
+the floor.
+
+Hollywood director **PJ Ace (@PJaccetturo)** retweeted the film, calling
+it *"one of the best short films in recent years"* and started a manhunt
+for the author.
+
+A few weeks later Mx-Shell went on a Douyin livestream and **gave away
+his entire workflow** — the prompts, the camera language, the failure
+modes, the rerolls.
+
+This repo is the result of digesting 130,000 characters of his materials
+into a structured, reusable system.
+
+---
+
+## What's in here
 
 ```
 ai-shortfilm-prompts/
-├── README.md                  ← 你在看的这一份
-├── LICENSE                    ← MIT
-├── .claude-plugin/            ← plugin 元数据（plugin.json + marketplace.json）
-├── 方法论.md                  ← Mx-Shell 的 5 段式提示词模板讲解 ⭐
-├── 实战FAQ.md                 ← 整合的 17 条 + 直播 Q&A
-├── 原始提示词/                ← Mx-Shell 公开过的 10+ 个完整作品
-│   ├── 索引.md
-│   ├── 丧尸清道夫.md          ← 标志作
-│   ├── 假面骑士-变身系列.md   ← 5 个变体共享一套模板
-│   ├── 卡莎-LOL变身.md        ← 15s / 20s / 5s 三个版本
-│   ├── 环太平洋-高达.md       ← 重型机甲跳机 + FPV 运镜
-│   ├── 赛博江湖.md            ← 邵氏 + 蒸汽朋克模板
-│   └── 合金装备-武器充能与打斗.md ← 后期剪辑型动作戏
-├── 模板/                       ← 去掉 IP 的通用骨架
-│   ├── 15秒变身模板.md
-│   ├── 多分镜叙事模板.md
-│   └── 风格画质骨架.md         ← 7 种可复用的氛围段
-├── 教程/                       ← 可以直接发布到各平台的二次创作内容
-│   ├── README.md               ← 分发策略
-│   ├── 公众号长文-丧尸清道夫拆解.md  ← ~5000 字深度版
-│   └── 抖音小红书短文版.md          ← 短平快版（抖音/小红书/Twitter）
-├── .claude/skills/shortfilm-prompt/  ← Claude Code Skill
-│   └── SKILL.md                ← /shortfilm-prompt 调用后自动生成提示词
-├── 来源与致谢.md
-└── 资料/                       ← 原始 docx / 直播 mp4 / pandoc 转换的 md
-    ├── 直播回放切片.mp4
-    ├── mx-shell提示词+问题解决方案（2026.03.15).docx
-    ├── mx-shell提示词合集+问题解决方案(2026.05.10).docx
-    ├── 直播回放文字版1.doc
-    ├── 直播回放文字版2.doc
-    ├── 视频说明.md              ← 视频内容说明 + 处理建议
-    ├── 视频截图/                ← 6 张直播关键帧（可作教程配图）
-    └── markdown/              ← pandoc 转出来的 md 归档
+├── README.md              You're here. English entry point.
+├── README.zh.md           Chinese version.
+├── methodology.md         The 5-stage prompt structure, explained.
+├── methodology.zh.md      Chinese version.
+├── faq.md                 Q&A: tools, failures, costs, edge cases.
+├── faq.zh.md              Chinese version.
+├── credits.md             Sources & attribution.
+├── credits.zh.md          Chinese version.
+├── LICENSE                CC BY-NC-SA 4.0 (this work) + Mx-Shell ARR (his originals)
+│
+├── 原始提示词/             Mx-Shell's complete prompts (kept in Chinese,
+│                           filenames preserved as he wrote them)
+│   ├── 索引.md             Index
+│   ├── 丧尸清道夫.md       Zombie Cleaner
+│   ├── 假面骑士-变身系列.md  Kamen Rider transformation series (5 variants)
+│   ├── 卡莎-LOL变身.md      League of Legends Kai'Sa transformation
+│   ├── 环太平洋-高达.md     Pacific Rim + Gundam mech-drop
+│   ├── 赛博江湖.md          Cyber-wuxia template
+│   └── 合金装备-武器充能与打斗.md  Metal Gear-style weapon-charge + combat
+│
+├── 模板/                   Generalized templates (IP-stripped reusable bones)
+│   ├── 15秒变身模板.md      15-second transformation
+│   ├── 多分镜叙事模板.md     Multi-shot narrative
+│   └── 风格画质骨架.md       7 reusable atmosphere/look prefabs
+│
+├── .claude/skills/shortfilm-prompt/   Claude Code Skill
+│   ├── SKILL.md            How Claude should generate prompts (7 hard rules + 10-item checklist)
+│   ├── TESTING.md          How to run rigorous skill tests in another Claude window
+│   └── examples/           5 test cases with expected outputs
+│
+└── .claude-plugin/         Plugin metadata (plugin.json + marketplace.json)
 ```
 
 ---
 
-## 怎么读
+## TL;DR — The 5-stage prompt structure
 
-**如果你只有 10 分钟** → 读 [方法论.md](./方法论.md)。
-那里讲了 Mx-Shell 反复使用的 5 段式结构，看完你大概就能开始自己写。
+Every Mx-Shell video prompt follows the same skeleton. The order matters:
 
-**如果你想自己做一部变身/丧尸/MV 短片**：
-1. 先看 [方法论.md](./方法论.md) 理解结构
-2. 翻 [原始提示词/](./原始提示词/) 找一个最接近你想做的作品
-3. 翻 [模板/](./模板/) 找一份去 IP 的骨架，填上自己的设定
-4. 翻 [实战FAQ.md](./实战FAQ.md) 看遇到具体问题怎么处理
+```
+1. Core theme            ← 3-6 style tags separated by |
+2. Character & scene     ← Face / clothing / environment
+3. Atmosphere & quality  ← Visual base / color tone / style core
+4. Camera rules          ← Single-shot or multi-shot / angle / breathing
+5. Storyboard            ← Per-second OR per-shot breakdown
+```
 
-**如果你用 Claude Code**：
-把 `.claude/skills/shortfilm-prompt/` 拷到你的工作目录（或 `~/.claude/skills/` 全局可用），然后输入 `/shortfilm-prompt` —— Skill 会问你几个问题然后帮你写提示词。
+### Three counter-intuitive rules
+
+1. **Specify real camera + lens models.**
+   Don't write *"cinematic feel"*. Write
+   *"simulated IMAX film camera, Panavision C-series lens, 35mm focal,
+   f/4 aperture."* AI training data binds those exact strings to real
+   movie aesthetics.
+
+2. **Describe imperfections.**
+   *"Battle-damaged armor, paint worn off, oil in the joints, minor
+   facial blemishes preserved."* Perfection looks fake. The visceral
+   realism comes from the flaws.
+
+3. **Leave the ending empty.**
+   *"No dialogue. No explosion. No blinding light.
+   Just a figure standing in the smoke, a meteor crossing the sky."*
+
+Full methodology in [methodology.md](./methodology.md).
 
 ---
 
-## 这套方法论是为谁写的
+## Install the Skill (Claude Code users)
 
-- **写过提示词，但效果一直不稳定**的人 —— 这里有结构化的写法。
-- **想做 AI 短片，但不知道从哪开始**的人 —— 直接套用模板就行。
-- **被"AI 生成视频质量差"劝退**过的人 —— 90% 的问题不是模型不行，是提示词没写对。
-
----
-
-## 这套方法论**不是**
-
-- 一键复制粘贴的咒语 —— Mx-Shell 自己也说"用同样的提示词生成两次都会差很多"。AI 是抽卡。
-- 通用万灵药 —— 这套方法主要为 **Seedance 2.0 / 小云雀 沉浸式短片**优化。其他模型（Sora / 可灵 / 即梦）思路通用，具体词汇可能要调。
-- 完整教程 —— 没讲剪辑、调色、配乐、后期。建议自学剪映 + 找 Artlist 等版权音乐网站。
-
----
-
-## 安装 Skill（Claude Code 用户）
-
-三种方式任选：
-
-**方式 1：项目内引用**（推荐用于试用）
 ```bash
+# Option 1 — Try it inside this repo
 git clone https://github.com/jnMetaCode/ai-shortfilm-prompts.git
 cd ai-shortfilm-prompts
-claude  # 进入 Claude Code 后输入 /shortfilm-prompt
-```
+claude   # then type /shortfilm-prompt
 
-**方式 2：全局可用**
-```bash
+# Option 2 — Make it available globally
 mkdir -p ~/.claude/skills
-cp -r ai-shortfilm-prompts/.claude/skills/shortfilm-prompt ~/.claude/skills/
-# 在任意目录启动 Claude Code 都能用 /shortfilm-prompt
+cp -r ai-shortfilm-prompts/.claude/skills/shortfilm-prompt \
+      ~/.claude/skills/
+
+# Option 3 — As a submodule in your own project
+git submodule add https://github.com/jnMetaCode/ai-shortfilm-prompts.git \
+                  .claude/skills/_shortfilm
 ```
 
-**方式 3：Git Submodule**（持续追更）
-```bash
-git submodule add https://github.com/jnMetaCode/ai-shortfilm-prompts.git .claude/skills/_shortfilm
-# 更新：git submodule update --remote
+Then in Claude Code:
+
 ```
+/shortfilm-prompt  Help me write a 15-second prompt for a robot
+                   transformation, green color palette, energy core in
+                   the belt buckle, post-apocalyptic jungle background
+```
+
+The Skill walks through the 5-stage structure, runs a 10-item self-check,
+and warns you about IP names that may be blocked by Seedance 2.0.
 
 ---
 
-## 姊妹项目（同作者的其他仓库）
+## Compatible video models
 
-本项目是 [@jnMetaCode](https://github.com/jnMetaCode) 系列的视频方向第一个项目。其他方向：
+The 5-stage structure is **model-agnostic**. Verified to work well with:
 
-- [superpowers-zh](https://github.com/jnMetaCode/superpowers-zh) —— 编程方法论 skill 中文增强版
-- [agency-agents-zh](https://github.com/jnMetaCode/agency-agents-zh) —— 211 个 AI 专家角色
-- [agency-orchestrator](https://github.com/jnMetaCode/agency-orchestrator) —— 多角色协作编排
-- [ai-coding-guide](https://github.com/jnMetaCode/ai-coding-guide) —— Claude Code 技巧速查
-- [shellward](https://github.com/jnMetaCode/shellward) —— AI Agent 安全中间件
-- [ai-coding-trilogy](https://github.com/jnMetaCode/ai-coding-trilogy) —— AI 编程实战三卷书
-
----
-
-## 常用工具
-
-Mx-Shell 自述他用的工具栈（数据来自直播 + 文档）：
-
-| 用途 | 工具 |
+| Model | Notes |
 |---|---|
-| 视频生成 | 小云雀里的 **Seedance 2.0**（**不**用 Fast 版） |
-| 图像生成 | **GPT Image**（占 80%）+ Midjourney + Krea |
-| 材质优化 | **Flux Max**（金属、瓷砖、皮肤细节单独过一遍） |
-| 三视图 | **Nanobanana** |
-| 文案辅助 | **豆包** + ChatGPT（打斗戏让豆包写后自己改） |
-| 剪辑 | **剪映** |
-| 配乐 | **Artlist.io**（版权音乐） |
+| Seedance 2.0 (Doubao Xiaoyunque, 沉浸式短片) | Mx-Shell's primary engine. **Avoid the "Fast" variant** — quality drops. Strict IP-name filter. |
+| Sora | Prefers concise prompts. Keep 5 stages but trim per-section length. |
+| Kling (可灵) | More permissive on IP names. Needs *more* explicit motion description. |
+| Jimeng (即梦) | Strong 3D feel — emphasize "no game-CG feel" extra hard. |
+| Veo | Works well; English prompts preferred. |
 
 ---
 
-## 致谢
+## Sister projects (by the same author)
 
-**Mx-Shell** —— 原始材料的作者。
-他的话：
-> 我把我的提示词分享给各位，按照我写的这些模版，
-> 大家可以自己发挥自己的想象力去创作。
-> 群里有好几个兄弟用我的模版自己编写出来的我看了真的非常不错，
-> 大家也可以多交流，互相学习。
+This is the video-prompt sibling of the AI-coding ecosystem maintained
+by [@jnMetaCode](https://github.com/jnMetaCode):
 
-**PJ Ace（@PJaccetturo）** —— 好莱坞导演，最初点赞《丧尸清道夫》让它出圈。
+- [superpowers-zh](https://github.com/jnMetaCode/superpowers-zh) — Chinese-enhanced edition of `obra/superpowers` (TDD / debug / git workflow skills)
+- [agency-agents-zh](https://github.com/jnMetaCode/agency-agents-zh) — 211 plug-and-play AI expert personas
+- [agency-orchestrator](https://github.com/jnMetaCode/agency-orchestrator) — Multi-agent collaboration orchestrator
+- [ai-coding-guide](https://github.com/jnMetaCode/ai-coding-guide) — 66 Claude Code tips
+- [shellward](https://github.com/jnMetaCode/shellward) — AI Agent security middleware
+- [ai-coding-trilogy](https://github.com/jnMetaCode/ai-coding-trilogy) — AI coding three-volume book
 
-详见 [来源与致谢.md](./来源与致谢.md)。
+All projects share the same `SKILL.md` format. The video skill stacks
+freely with any of them.
 
 ---
 
 ## License
 
-本仓库内容采用 **[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)** 许可协议。
+This work is licensed under
+**[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)**.
 
-引用的 Mx-Shell 原创提示词与文档片段，版权归 Mx-Shell 所有，本仓库仅作学习参考归档，来源为他本人公开分享的粉丝群文档与抖音直播。
+Mx-Shell's original prompts and document excerpts — sourced from his
+fan-group documents and public Douyin livestream that he himself
+distributed — are **© Mx-Shell, all rights reserved unless otherwise
+licensed**. This repo archives them for educational reference only;
+commercial use requires contacting Mx-Shell directly.
 
-完整许可见 [LICENSE](./LICENSE)，归属说明见 [来源与致谢.md](./来源与致谢.md)。
+See [LICENSE](./LICENSE) for the full dual-license text and
+[credits.md](./credits.md) for attribution.
 
 ---
 
-## 一句话
+## A line worth remembering
 
-> "我说白了，对于创作来说，设备不是重要的。想法才是最重要的。"
-> —— Mx-Shell，2026 年 5 月直播
+> *"For creation, the equipment is not what matters.
+> The idea is what matters."*
+> — Mx-Shell, May 12, 2026 livestream

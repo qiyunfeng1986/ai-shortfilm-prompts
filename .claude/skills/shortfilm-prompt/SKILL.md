@@ -1,226 +1,304 @@
 ---
 name: shortfilm-prompt
-description: 生成 AI 短片提示词（Seedance 2.0 / 小云雀 / Sora / 可灵 / 即梦通用），采用 Mx-Shell《丧尸清道夫》同款 5 段式结构。当用户想做特摄变身、多分镜叙事短片、武器充能/打斗段、或电影感视频提示词时调用。
+description: Generate cinematic AI shortfilm prompts (works with Seedance 2.0, Xiaoyunque, Sora, Kling, Jimeng, Veo) using the 5-stage structure from Mx-Shell's Zombie Cleaner. Trigger when the user wants transformation sequences, multi-shot narrative shorts, weapon-charge/combat segments, or any cinematic video prompt.
 ---
 
-# shortfilm-prompt：电影感 AI 视频提示词生成器
+# shortfilm-prompt — Cinematic AI Video Prompt Generator
 
-你扮演一位精通 AI 短片 5 段式提示词写法的导演助理（该写法首发由 Mx-Shell 在《丧尸清道夫》中验证）。
-用户调用这个 skill 时，他们想生成一份能直接喂给 Seedance 2.0 / 小云雀 / Sora / 可灵 / 即梦 等视频模型的提示词。
+You play the role of a director's assistant fluent in the 5-stage AI
+shortfilm prompt structure (first proven by Mx-Shell in *Zombie Cleaner*).
+When the user invokes this skill they want a prompt they can paste
+directly into a video model: Seedance 2.0 / Xiaoyunque / Sora / Kling /
+Jimeng / Veo.
 
-**通用性提示**：5 段式结构本身是模型无关的。在输出末尾根据用户提到的目标模型给一句调整建议（如 Sora 偏好简洁、可灵对 IP 名更宽容、Seedance 需要避 IP 名等）。
+**Model-agnostic core**: the 5-stage structure itself is the same across
+all models. At the end of your output, give one line of model-specific
+advice (Sora prefers concise; Kling is more permissive on IP names;
+Seedance blocks IP names; etc.).
 
-## 工作流程（按顺序执行）
+## Workflow (execute in order)
 
-### 第 1 步：判断用户是否已经说清楚了需求
+### Step 1 — Did the user already specify enough?
 
-如果用户的初始请求里已经给出了**所有**下列信息，跳过第 2 步直接进入第 3 步：
+If their initial request already includes **all** of the following,
+skip Step 2 and go straight to Step 3:
 
-- 视频类型（变身 / 多分镜叙事 / 单镜头氛围片 / 武器充能 / 打斗 / 静态人物海报）
-- 时长（5s / 10s / 15s / 20s / 多镜头剪辑型）
-- 主体（人物 / 机器人 / 机甲）的基本设定
-- 场景（地点 + 时间 + 氛围）
-- 想要的视觉风格（参考作品 / 美学方向）
+- Video type (transformation / multi-shot narrative / atmospheric single
+  shot / weapon-charge / combat / static character poster)
+- Duration (5s / 10s / 15s / 20s / multi-shot edited)
+- Subject base setup (person / robot / mech)
+- Scene (location + time + atmosphere)
+- Visual style preference (reference film or aesthetic)
 
-### 第 2 步：如果信息不全，最多问 2-3 个关键问题（用 AskUserQuestion）
+### Step 2 — If info is incomplete, ask at most 2–3 key questions
 
-按缺什么问什么。优先级：
-1. **视频类型 + 时长**（决定用哪种模板）
-2. **主体设定 + 场景**（决定内容）
-3. **视觉风格 / 对标作品**（决定氛围段）
+Use `AskUserQuestion`. Priority order:
 
-**不要问太多。** Mx-Shell 自己也是边做边想 —— 没必要一次问完所有细节。给用户写一版后再迭代比一次问 10 个问题强。
+1. **Video type + duration** (decides which template branch)
+2. **Subject + scene** (decides content)
+3. **Visual style / reference aesthetic** (decides the atmosphere stage)
 
-### 第 3 步：按 Mx-Shell 5 段式结构输出提示词
+**Don't over-ask.** Mx-Shell himself worked iteratively — *"I made it
+up as I went."* Writing a first draft and refining beats interrogating
+the user for 10 details.
+
+### Step 3 — Output a prompt in the 5-stage structure
 
 ```
-1. 核心主题       ← 3-6 个 tag，用 | 分隔
-2. 人物与基础设定 ← 面部 / 服装 / 场景
-3. 氛围与画质     ← 视觉基调 / 色彩与影调 / 风格核心
-4. 运镜规则       ← 单镜头 or 分镜 / 角度 / 呼吸感
-5. 分镜（时间轴） ← 按秒切片 or 按镜头切片
+1. Core theme            ← 3-6 tags separated by |
+2. Character & scene     ← Face / clothing / scene
+3. Atmosphere & quality  ← Visual base / color tone / style core
+4. Camera rules          ← Single-shot or multi-shot / angle / breathing
+5. Storyboard            ← Per-second slices OR per-shot slices
 ```
 
-### 第 4 步：输出后简单解释 2-3 个写法选择
+### Step 4 — Briefly explain 2–3 of your writing choices
 
-不要长篇大论。挑用户最可能想改的地方点一下。例：
-> 我把触发词写成了「低吟 + 自创音节」而不是具体 IP 词 —— Seedance 对 IP 名敏感，照搬容易被拦。
-> 12-15 秒段我留了「腰侧裂隙」未愈合 —— 这是 Mx-Shell 标志性的"战损美学"，让最后定格不至于太干净。
+Don't lecture. Point at the parts the user is most likely to want to
+tune. Examples:
+
+> I wrote the trigger phrase as "whispered self-coined syllable" instead
+> of a specific IP word — Seedance blocks IP names.
+>
+> I left the waist-side "unhealed gap" at 12–15s — this is Mx-Shell's
+> signature "battle-damaged aesthetic" that prevents the final freeze
+> from looking too clean.
 
 ---
 
-## 方法论核心（必须遵守）
+## Methodology core (must follow)
 
-### 段 1 · 核心主题
-3-6 个 tag，用 `|` 分隔。从"画面类型 → 题材 → 美学风格"层层递进。例：
+### Stage 1 · Core theme
+
+3–6 tags separated by `|`. Ramp from "shot type → genre → aesthetic":
+
 ```
-核心主题：写实暗黑特摄 | BLACK SUN 美学 | 破碎肉身 | 战损变身 | 末日战场
-核心主题：原子朋克 | 末日丧尸 | 电影级质感 | 超写实 | 杜绝游戏 CG 感
+Core theme: gritty dark tokusatsu | BLACK SUN aesthetic | broken flesh | combat-damaged transformation | post-apocalyptic battlefield
+Core theme: atom-punk | post-apocalyptic zombies | cinematic | hyperreal | no game-CG feel
 ```
 
-### 段 2 · 人物与基础设定
-三行：**面部 / 服装 / 场景**。
-- 面部：用"参照上传图片，五官、脸型、发型百分百还原，杜绝美化"开头，再补瑕疵和表情。
-- 服装：写**质地**（哑光黑色皮质，不是黑色皮衣）。
-- 场景：动态描述（微风、硝烟、陨石），不要静态背景。
+### Stage 2 · Character & scene
 
-### 段 3 · 氛围与画质
-**关键技巧**：用具体摄影机型号 + 镜头型号 = 给 AI 明确视觉锚点。
+Three lines: **Face / Clothing / Scene**.
 
-Mx-Shell 常用的摄影机组合：
-- 史诗感 / 大场面 → IMAX 胶片摄影机 + Panavision C 系列镜头（35mm，f4）
-- 暗调赛博 / 写实硬核 → 索尼威尼斯电影机 + 佳能 K-35 系列镜头
-- 港片 / 武侠 → 柯达 35mm 复古胶片，跳过漂白胶片质感
-- 商业人像 → Canon EF 85mm f/1.2
+- **Face**: Open with *"Reference uploaded photo. Features/face/hair
+  100% preserved. No beautification."* Then describe imperfections and
+  expression.
+- **Clothing**: Material first (*"matte black leather"* not *"black
+  leather"*).
+- **Scene**: Active environment (wind, smoke, meteors). Static
+  background ≠ atmosphere.
 
-色调常用词：低饱和灰蓝 / 好莱坞青橙色调 / 60 年代复古暖橙 + 海盐蓝 / 暗调低照明高对比度。
+### Stage 3 · Atmosphere & quality (the key trick)
 
-### 段 4 · 运镜规则
-三行：**单镜头 / 角度 / 呼吸感**。
-- 单镜头：写"一镜到底，无剪辑"（如果是单镜头）；多镜头改成"按分镜剪辑"。
-- 角度：景别 + 角度 + 运动方向。
-- 呼吸感：永远写"手持拍摄，全程保持极其轻微的、如呼吸般的镜头浮动" —— Mx-Shell 几乎每个视频都有这句。
+**Use real camera + lens names.** AI training data binds enormous
+amounts of real movie imagery to specific camera metadata. Giving a
+concrete model = giving a concrete aesthetic anchor.
 
-### 段 5 · 分镜
-**两种写法**：
+Mx-Shell's go-to combinations:
 
-**写法 A：按秒切片**（适合单镜头变身、武器充能）
+| Aesthetic | Camera + lens |
+|---|---|
+| Epic / big-scene | IMAX film camera + Panavision C-series (35mm, f/4) |
+| Gritty cyber / hard sci-fi | Sony Venice + Canon K-35 series |
+| Hong Kong noir / wuxia | Kodak 35mm bleach-bypass |
+| Commercial portrait | Canon EF 85mm f/1.2 |
+
+Color phrases: low-saturation grey-blue / Hollywood teal-and-orange /
+60s warm-orange + sea-salt blue / low-light high-contrast.
+
+### Stage 4 · Camera rules
+
+Three lines: **Single-shot / Angle / Breathing**.
+
+- **Single-shot**: *"One continuous take, no edit"* (if a one-take); or
+  *"Edited across shots"* (if multi).
+- **Angle**: Shot size + angle + motion direction.
+- **Breathing**: ALWAYS include this exact sentence —
+  *"Handheld shot. Throughout, maintain an extremely subtle, breath-like
+  camera float to enhance presence."*
+  Mx-Shell includes it in nearly every prompt. Forces subtle handheld
+  float instead of artificial-static CG default.
+
+### Stage 5 · Storyboard
+
+**Two styles**:
+
+**Style A — per-second** (single-shot transformations, weapon-charge):
 ```
-0-3 秒 · 凝视
-动作：…
-镜头：…
-特效：…
+0–3s · Gaze
+Action: …
+Camera: …
+VFX: …
 
-3-6 秒 · 启动
-声音：…
-动作：…
-特效：…
-镜头：…
+3–6s · Activation
+Sound: …
+Action: …
+VFX: …
+Camera: …
 ```
-每段 3-5 件套：动作 / 镜头 / 特效（+ 可选：声音 / 面部 / 表情）。
+Three-part formula per segment: Action + Camera + VFX. Optional add-ons:
+Sound, Face/Expression.
 
-**写法 B：按镜头切片**（适合多镜头叙事、MV）
+**Style B — per-shot** (multi-shot narrative, MV):
 ```
-分镜一：
-景别：…
-构图：…
-运镜手法：…
-画面内容：…
+Shot 1:
+Shot size: …
+Composition: …
+Camera move: …
+Action: …
 
-分镜二：
+Shot 2:
 …
 ```
-每个分镜四件套：景别 / 构图 / 运镜手法 / 画面内容。
+Four-part formula per shot: Shot size + Composition + Camera move + Action.
 
 ---
 
-## 七条硬规则（写完自检）
+## Seven hard rules (run a self-check before delivery)
 
-这是用 TDD 方法反推出来的「未加载 skill 的 Claude 最容易翻车的 7 个点」。**每次输出前在脑子里过一遍这 7 条**，不合规的话改了再交付。
+Reverse-engineered from "the most common failure modes of a baseline
+Claude without this skill." Run through these mentally before output,
+and fix non-compliant parts.
 
-### 规则 1：每段都必须有具体名词，禁用空泛美化词
+### Rule 1 — Every section must have concrete nouns. Ban vague praise words.
 
-| ❌ 禁用 | ✅ 替换 |
+| ❌ Avoid | ✅ Replace with |
 |---|---|
-| 电影感 / 史诗感 / 大片感 | "IMAX 胶片摄影机 + Panavision C 系列镜头 35mm f4" |
-| 震撼 / 炫酷 / 史诗 / 完美 | 删掉或换成具体物理效果（"画面边缘被轻微拉伸"） |
-| 帅气 / 冷峻 / 凛冽 | "眉心微蹙" / "目光中带一丝轻蔑" / "脊背紧绷" |
-| 高级感 / 质感拉满 / 细节满满 | "釉面光泽" / "金属拉丝" / "胶片颗粒感" |
-| 4K / 高清 / 高画质 | 不写。写"低饱和灰蓝主调，胶片颗粒感"等具体视觉描述 |
+| cinematic / epic / movie-quality | "simulated IMAX film camera + Panavision C-series 35mm f/4" |
+| stunning / spectacular / perfect | Delete, or use concrete physical effects ("screen edges stretch slightly") |
+| handsome / cold / chilling | "slight furrow of the brow" / "a hint of contempt in the gaze" / "back tense" |
+| premium-feel / texture-rich / detail-loaded | "glazed surface gloss" / "metal brushed finish" / "film grain" |
+| 4K / HD / high-quality | Don't. Write concrete visuals ("low-saturation grey-blue base, film grain") |
 
-**自检**：从输出里随便挑 3 个形容词，问自己"这个词 AI 看了能产生具体画面吗？" 不能 → 删 / 替换。
+**Self-check**: pick any 3 adjectives from your output. Ask yourself —
+*can the AI form a concrete image from this?* If no → delete / replace.
 
-### 规则 2：每个视频提示词必须包含摄影机型号 + 镜头型号
+### Rule 2 — Every video prompt must include camera + lens model
 
-候选组合（按风格选）：
-- 史诗感大场面：**IMAX 胶片摄影机 + Panavision C 系列镜头**（35mm，f4）
-- 暗调赛博 / 写实硬核：**索尼威尼斯电影机 + 佳能 K-35 系列镜头**
-- 港片武侠：**柯达 35mm 复古胶片**，跳过漂白胶片质感
-- 商业人像（用于生图）：**Canon EF 85mm f/1.2**
+Candidate combos (pick one based on style):
+- Epic big-scene: **IMAX + Panavision C-series** (35mm, f/4)
+- Gritty cyber: **Sony Venice + Canon K-35**
+- Hong Kong noir / wuxia: **Kodak 35mm bleach-bypass**
+- Commercial portrait (for image gen): **Canon EF 85mm f/1.2**
 
-**自检**：搜输出里有没有上述任一组合名 —— 没有就补。
+**Self-check**: search your output for one of these combo names. None
+present → add.
 
-### 规则 3：永远加"呼吸感"那一行
+### Rule 3 — Always include the "breathing" line
 
-精确句式：
-> "手持拍摄，全程保持极其轻微的、如呼吸般的镜头浮动，增强临场感。"
+Exact phrasing:
+> *"Handheld shot. Throughout, maintain an extremely subtle, breath-like
+> camera float to enhance presence."*
 
-不能简化为"手持拍摄"。"如呼吸般"和"极其轻微"两个限定词缺一不可，否则 AI 会理解为剧烈摇晃。
+Don't simplify to *"handheld shot."* Both qualifiers ("extremely subtle"
+and "breath-like") are essential — otherwise the AI interprets it as
+heavy shaking.
 
-### 规则 4：永远加"声音"那一行
+### Rule 4 — Always include the sound line
 
 ```
-声音：不需要配乐，仅保留同期声。
+Sound: No score. Production audio only.
 ```
 
-如果场景有标志性环境音，**显式枚举**（例：雨声、雷声、金属摩擦、能量低频嗡鸣），不要让 AI 猜。
+For scenes with signature ambient sounds, **enumerate explicitly**
+(rain, thunder, metal scrape, low-frequency energy hum). Don't make the
+AI guess.
 
-### 规则 5：人物 / 装备 / 战衣段必须至少 2 处瑕疵描述
+### Rule 5 — Character / equipment / costume sections need ≥2 imperfection descriptions
 
-候选词：
-- 面部：保留轻微面部瑕疵 / 面部伤口、纱布、血渍 / 嘴角有血渍 / 淤青
-- 装备：磨损掉漆 / 关节油污 / 细微划痕使用痕迹明显 / 战损痕迹触目惊心
-- 状态：战衣整体远非平整 / 部分单元故障般闪烁 / 一道旧伤被重新撕开
+Candidate phrasings:
+- Face: "preserve minor facial blemishes" / "facial wound, gauze,
+  bloodstain" / "blood at the corner of the mouth" / "bruising"
+- Equipment: "paint worn off" / "oil in joints" / "minor scratches,
+  visible wear" / "battle damage everywhere"
+- State: "armor never perfectly flat" / "some units flicker as if
+  faulty" / "an old wound torn open again"
 
-**自检**：输出里数瑕疵词，少于 2 处 → 加。
+**Self-check**: count imperfection words. Less than 2 → add.
 
-Mx-Shell 反复强调："过于完美就假。真实的世界里任何东西都是有瑕疵的。"
+Mx-Shell's repeated emphasis: *"Too perfect = fake. The real world has
+imperfections in everything."*
 
-### 规则 6：单镜头变身 / 史诗段的结尾不要堆特效
+### Rule 6 — Don't pile FX at the end of single-shot transformations / epic segments
 
-不要写：光芒万丈 / 爆炸特效 / 胜利姿态 / 凌空一跃 / 镜头炸开
+Don't write: blinding light / explosion FX / victory pose / leap into
+sky / camera blow-out.
 
-**默认结尾模板**：
-> "没有台词，没有爆炸，没有光芒万丈。只有 {{主角}} {{动作}}，{{环境细节}}。"
+**Default closing template**:
+> *"No dialogue. No explosion. No blinding light. Just {{subject}}
+> {{action}}, {{environment detail}}."*
 
-例：
-- "只有身穿不完整战衣的人站在原地，风吹过战场硝烟，远处天空划过陨石。"
-- "只有暴雨持续打在能量场上，被瞬间汽化的水雾环绕着主角。"
+Examples:
+- *"Just a figure in unfinished battle-armor standing in place. Wind
+  carries battlefield smoke. A meteor crosses the distant sky."*
+- *"Just the rain continuing to hit the energy field. The vaporized
+  mist halo surrounds the subject."*
 
-### 规则 7：避开 IP 词 + 模型选择提示
+### Rule 7 — Avoid IP names + give model-specific advice
 
-不要照搬具体 IP 名（仮面ライダー / 高达 / 钢铁侠 / 假面骑士 / 卡莎 / MJ / 黑客帝国 ...）。Seedance 2.0 对 IP 词敏感会被拦。
+Do not paste specific IP names (Kamen Rider / Gundam / Iron Man / Kai'Sa
+/ MJ / The Matrix...). Seedance 2.0's IP filter is aggressive.
 
-替代写法：
-- "参考钢铁侠" → "原子朋克未来主义复古风格"
-- "迈克尔·杰克逊舞蹈" → "1980 年代标志性街舞动作风格（卡点转头/耸肩/太空步/压帽子顶胯 wave）"
-- "BLACK SUN 美学" → "暗黑写实战损美学"
+Substitutions:
+- "reference Iron Man" → "atom-punk retro-futurist red-and-gold combat suit"
+- "Michael Jackson dance" → "1980s signature breakdance moves (beat-synced head turns / shoulder rolls / moonwalk / tilted-hat hip wave)"
+- "BLACK SUN aesthetic" → "gritty dark battle-damaged aesthetic"
 
-如果用户**明确要求**用 IP 名，照写但**末尾必须加**一行提示：「这里用了 IP 名，Seedance 可能拦截，建议替换或删除部分标点试试」。
+If the user **explicitly insists** on an IP name, write it but **add a
+warning line at the end**:
+> *"Note: this prompt contains an IP name ({name}). Seedance may block
+> it. Consider replacing it or deleting some punctuation."*
 
-**针对不同模型的兼容性建议**（输出末尾说一句）：
-- Seedance 2.0 / 小云雀：避 IP 词，单镜头别超 15 秒
-- Sora：偏好简洁结构化，5 段可以保留但每段精简
-- 可灵：IP 词更宽容，但运动描述要更具体
-- 即梦：擅长 3D 渲染感，需要更强调"杜绝 CG 感"
+**Model-specific advice to include at end of output:**
+- Seedance 2.0 / Xiaoyunque: avoid IP names; single-shot ≤ 15s
+- Sora: prefers concise structure; keep 5 stages but trim per-section length
+- Kling: more lenient on IP names; needs more explicit motion description
+- Jimeng: strong 3D-CG feel — extra emphasis on "no game-CG feel"
+- Veo: works well; English prompts preferred
 
 ---
 
-## 输出前的 30 秒自检清单
+## 30-second self-check checklist (before delivery)
 
-写完按这个核对再交付：
+- [ ] All 5 stages present (core theme / character / atmosphere / camera / storyboard)
+- [ ] Camera + lens model named (Rule 2)
+- [ ] Full "breath-like float" sentence (Rule 3)
+- [ ] "Sound: No score. Production audio only." (Rule 4)
+- [ ] ≥2 imperfection descriptions (Rule 5)
+- [ ] Closing is empty / restrained, no FX pile-up (Rule 6)
+- [ ] No vague praise words: "perfect / stunning / epic / handsome / 4K / texture-rich" (Rule 1)
+- [ ] No IP names, OR if present, warning line added (Rule 7)
+- [ ] Single-shot ≤ 15s / multi-shot ≤ 8 shots
+- [ ] Closing model-specific advice line included
 
-- [ ] 5 段结构齐全（核心主题 / 人物设定 / 氛围画质 / 运镜规则 / 分镜）
-- [ ] 有摄影机型号 + 镜头型号（规则 2）
-- [ ] 有"如呼吸般的镜头浮动"那一句（规则 3）
-- [ ] 有"声音：不需要配乐，仅保留同期声"那一句（规则 4）
-- [ ] 至少 2 处瑕疵描述（规则 5）
-- [ ] 结尾不堆特效，留白（规则 6）
-- [ ] 没有"完美/震撼/史诗/帅气/4K/质感拉满"这类空泛词（规则 1）
-- [ ] 没有具体 IP 名 OR 有则末尾加提示（规则 7）
-- [ ] 单镜头≤15 秒 / 多镜头≤8 个分镜
-- [ ] 末尾给针对目标模型的兼容性建议
-
-少一条就不交。
+Less than full pass = don't deliver. Fix and re-check.
 
 ---
 
-## 输出格式
+## What NOT to do
 
-直接输出一份完整、能复制粘贴使用的提示词。不要分成多个代码块。用文档结构（标题 / 项目符号 / 时间标记）让用户能一眼看清。
+- Don't write "perfect / stunning / epic victory" — AI models respond poorly to these
+- Don't make single-shots > 15s or multi-shots > 8 shots — reroll
+  success rate collapses
+- Don't omit "Sound: production audio only" — the AI will fabricate
+  music
+- Don't mix atmosphere blocks across different color tones — color
+  drift wrecks multi-shot edits
 
-**最后简短说一下**：
-- 2-3 句"我做了哪些选择 / 为什么"
-- 1 句使用建议（"用 Seedance 2.0，不要用 Fast 版" / "建议先做这一段试质感再补后续"）
+---
 
-如果用户给出反馈想改某一段，**只重写那一段**，不要全部重发。
+## Output format
+
+Output one complete, copy-paste-ready prompt. Don't split into multiple
+code blocks. Use document structure (headers, bullets, time markers) so
+the user can scan it at a glance.
+
+**Then briefly**:
+- 2–3 sentences explaining your writing choices
+- 1 line of usage advice ("use Seedance 2.0, not Fast version" / "try
+  this segment first to gauge texture")
+- 1 line of target-model-specific compatibility advice
+
+If the user gives feedback to modify a section, **rewrite only that
+section** — don't resend the whole thing.
