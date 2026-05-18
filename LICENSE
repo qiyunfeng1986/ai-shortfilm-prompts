@@ -6,7 +6,7 @@ This repository's content is split into two categories under different
 licensing terms. Chinese version available at LICENSE.zh.
 
 ─────────────────────────────────────────────────────────────────────────────
-[A] Original work by jnMetaCode  —  CC BY-NC-SA 4.0
+[A] Original work by jnMetaCode  —  MIT License
 ─────────────────────────────────────────────────────────────────────────────
 
 Scope:
@@ -20,42 +20,28 @@ Scope:
   - All code, scripts, comments, and document structure authored by
     jnMetaCode
 
-License terms (Creative Commons Attribution-NonCommercial-ShareAlike 4.0
-International, "CC BY-NC-SA 4.0"):
+License terms (MIT License):
 
   Copyright (c) 2026 jnMetaCode
 
-  Licensed under CC BY-NC-SA 4.0.
-  See https://creativecommons.org/licenses/by-nc-sa/4.0/ for full terms.
+  Permission is hereby granted, free of charge, to any person obtaining a
+  copy of this software and associated documentation files (the
+  "Software"), to deal in the Software without restriction, including
+  without limitation the rights to use, copy, modify, merge, publish,
+  distribute, sublicense, and/or sell copies of the Software, and to
+  permit persons to whom the Software is furnished to do so, subject to
+  the following conditions:
 
-  You are free to:
-    ✅ Share — copy and redistribute the material in any medium or format
-    ✅ Adapt — remix, transform, and build upon the material
+  The above copyright notice and this permission notice shall be included
+  in all copies or substantial portions of the Software.
 
-  Under the following terms:
-    📝 Attribution (BY)   — You must give appropriate credit, provide a
-                            link to the license, and indicate if changes
-                            were made.
-    🚫 NonCommercial (NC) — You may not use the material for commercial
-                            purposes.
-    🔁 ShareAlike (SA)    — If you remix, transform, or build upon the
-                            material, you must distribute your
-                            contributions under the same license.
-
-  What counts as "commercial use":
-    - Paid courses / paid training
-    - Packaged ebooks / paid teaching materials
-    - Commercial SaaS / app integration
-    - AI model training (open or closed source)
-    - Any direct or indirect for-profit use
-
-  Non-commercial use includes:
-    - Personal study and research
-    - Academic citation (with attribution)
-    - Internal corporate training (not externally charged)
-    - Open-source / public-benefit projects
-
-  For commercial partnership: contact jnMetaCode (WeChat: "AI 不止语")
+  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+  OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+  MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+  IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY
+  CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT,
+  TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE
+  SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 ─────────────────────────────────────────────────────────────────────────────
 [B] Original work by Mx-Shell  —  All Rights Reserved by Mx-Shell
@@ -104,8 +90,7 @@ Sources and consent:
        or removal request from Mx-Shell
 
   If Mx-Shell provides a formal written license, this section will be
-  updated to reflect his chosen terms (suggested: CC BY-NC-SA 4.0 to
-  match [A], or CC BY 4.0).
+  updated to reflect his chosen terms.
 
   Copyright (c) 2026 Mx-Shell.
   All rights reserved unless explicitly licensed otherwise.
@@ -123,14 +108,11 @@ Requests to users
 ─────────────────────────────────────────────────────────────────────────────
 
   - When using methodology / templates / Skill, please retain
-    attribution links to jnMetaCode and Mx-Shell.
-  - Commercial use (courses, paid tutorials, training datasets) requires
-    contacting both jnMetaCode (via repo Issues) and Mx-Shell
-    individually.
-  - Derivative content containing original-text snippets must follow
-    the terms in section [B].
-  - Derivative works based on section [A] content (modifications,
-    translations, extensions) must be released under CC BY-NC-SA 4.0.
+    attribution to jnMetaCode.
+  - The [A] MIT-licensed portion is free for any use, including
+    commercial — just keep the copyright notice.
+  - The [B] Mx-Shell-authored portion has different terms above. Commercial
+    use of Mx-Shell's original prompts/quotes requires his consent.
   - For copyright disputes, please open an Issue. Maintainer will
     respond within 7 days.
 

@@ -45,7 +45,7 @@ ai-shortfilm-prompts/
 ├── faq.zh.md              Chinese version.
 ├── credits.md             Sources & attribution.
 ├── credits.zh.md          Chinese version.
-├── LICENSE                CC BY-NC-SA 4.0 (this work) + Mx-Shell ARR (his originals)
+├── LICENSE                MIT (this work) + Mx-Shell ARR (his originals)
 │
 ├── 原始提示词/             Mx-Shell's complete prompts (kept in Chinese,
 │                           filenames preserved as he wrote them)
@@ -169,16 +169,18 @@ freely with any of them.
 
 ## License
 
-This work is licensed under
-**[CC BY-NC-SA 4.0](https://creativecommons.org/licenses/by-nc-sa/4.0/)**.
+This repository uses **dual licensing**:
 
-Mx-Shell's original prompts and document excerpts — sourced from his
-fan-group documents and public Douyin livestream that he himself
-distributed — are **© Mx-Shell, all rights reserved unless otherwise
-licensed**. This repo archives them for educational reference only;
-commercial use requires contacting Mx-Shell directly.
+- **jnMetaCode's original work** (methodology, FAQ, templates, Skill,
+  metadata) — **[MIT License](./LICENSE)**. Free for any use including
+  commercial; just keep the copyright notice.
+- **Mx-Shell's original prompts and document excerpts** — sourced from
+  his fan-group documents and public Douyin livestream that he himself
+  distributed — are **© Mx-Shell, all rights reserved**. Archived here
+  for educational reference; commercial use requires contacting
+  Mx-Shell directly.
 
-See [LICENSE](./LICENSE) for the full dual-license text and
+See [LICENSE](./LICENSE) for full dual-license text and
 [credits.md](./credits.md) for attribution.
 
 ---
