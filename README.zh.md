@@ -169,7 +169,7 @@ Mx-Shell 自述他用的工具栈（数据来自直播 + 文档）：
 - **jnMetaCode 原创工作**（方法论 / FAQ / 模板 / Skill / 元数据）—— **[MIT License](./LICENSE)**，免费使用包括商业用途，保留版权声明即可
 - **Mx-Shell 原创内容**（原始提示词原文 / 直播 + 文档原文引用）—— **版权归 Mx-Shell 所有**，仅作学习参考归档，来源是他本人公开分享的粉丝群文档与抖音直播；商业使用须联系本人
 
-完整许可见 [LICENSE](./LICENSE) / [LICENSE.zh](./LICENSE.zh)，归属说明见 [credits.zh.md](./credits.zh.md)。
+完整许可见 [LICENSE](./LICENSE)（MIT 标准） + [NOTICE.zh](./NOTICE.zh)（双重许可细节）。归属说明见 [credits.zh.md](./credits.zh.md)。
 
 ---
 
