@@ -1,8 +1,20 @@
-# 《卡莎》变身系列
+# Kai'Sa (LoL) Transformation Series — Original Prompts
 
-> 来源：mx-shell 提示词合集 (2026.03.15)
-> 三部分：15 秒分镜版 / 20 秒分镜版 / 网页端延长 5 秒。
-> **提示词超字数，要用电脑网页版做，手机端自己删减。**
+> **Source**: Excerpted from Mx-Shell's publicly shared prompt
+> collection (March 15, 2026 document).
+> Three variants: 15-second per-shot version / 20-second per-shot
+> version / 5-second web-end extension. **Prompt exceeds the
+> character limit — must use the web client, mobile users need to
+> trim it themselves.**
+>
+> **Note on content**: Body in Chinese — Mx-Shell's original writing,
+> kept untranslated to preserve his voice. See
+> [methodology.md](../methodology.md) for the English structural
+> breakdown.
+
+---
+
+# 《卡莎》变身系列（原文）
 
 ---
 

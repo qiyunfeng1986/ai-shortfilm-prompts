@@ -1,7 +1,24 @@
-# 假面骑士 / 特摄变身系列
+# Kamen Rider / Tokusatsu Transformation Series — Original Prompts
 
-> 来源：mx-shell 提示词合集 (2026.03.15)
-> Mx-Shell 早期火爆的"战损变身"系列 5 个变体。共享同一套 5 段式模板，仅在配色 / 道具 / 触发词上做替换 —— 是学习方法论的最好对照样本。
+> **Source**: Excerpted from Mx-Shell's publicly shared prompt
+> collection (March 15, 2026 document distributed in his fan group).
+> Five "combat-damaged transformation" variants that went viral on
+> Mx-Shell's earlier work. All five share the same 5-stage template
+> — only color / props / trigger word change. **The clearest study
+> sample for understanding how variable-substitution works in the
+> methodology.**
+>
+> **Note on content**: Body in Chinese — Mx-Shell's original writing,
+> kept untranslated to preserve his voice. See
+> [methodology.md](../methodology.md) for the English structural
+> breakdown.
+>
+> **Variants**: Cockroach Rider · Fire Demon · Thunder Dragon ·
+> Rainbow Elk · Violet Hawk Valkyrie (+ flight version).
+
+---
+
+# 假面骑士 / 特摄变身系列（原文）
 
 ---
 

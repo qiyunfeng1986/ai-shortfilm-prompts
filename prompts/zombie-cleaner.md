@@ -1,8 +1,21 @@
-# 《丧尸清道夫》提示词
+# Zombie Cleaner — Original Prompts
 
-> 来源：mx-shell 提示词合集 (2026.05.10)
-> 这是让 PJ Ace 称为"近年来最佳短片之一"的作品的部分原始提示词。
-> 已修正原文档的标点符号 OCR 错误（`.` → `。` / `，` → 等），保留所有内容。
+> **Source**: Excerpted from Mx-Shell's publicly shared prompt
+> collection (May 10, 2026 document distributed in his fan group).
+> Partial original prompts behind the work PJ Ace called *"one of
+> the best short films in recent years."*
+>
+> **Note on content**: The body below is in Chinese — this is
+> Mx-Shell's original writing. Translating it would lose his voice
+> and his authorial control. OCR-introduced punctuation errors have
+> been corrected (`.` → `。` etc.) but no content was altered.
+>
+> See [methodology.md](../methodology.md) for the English
+> structural breakdown of how this prompt works.
+
+---
+
+# 《丧尸清道夫》提示词（原文）
 
 ---
 

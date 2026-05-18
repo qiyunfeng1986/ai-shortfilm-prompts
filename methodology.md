@@ -266,7 +266,9 @@ Restraint reads more elevated than excess.
 
 ## Want real examples?
 
-- [原始提示词/](./原始提示词/) — Mx-Shell's complete prompts (Chinese, untouched).
-  Includes *Zombie Cleaner*, *Kamen Rider* (5 variants), *Kai'Sa* (15s/20s/5s),
-  *Pacific Rim + Gundam*, *Cyber-wuxia*, *Metal Gear*.
-- [模板/](./模板/) — IP-stripped reusable skeletons you can fill in.
+- [prompts/](./prompts/) — Mx-Shell's complete original prompts
+  (Chinese body untouched, English header on each file).
+  Includes *Zombie Cleaner*, *Kamen Rider* (5 variants), *Kai'Sa*
+  (15s/20s/5s), *Pacific Rim + Gundam*, *Cyber-Wuxia*, *Metal Gear*.
+- [templates/](./templates/) — IP-stripped reusable skeletons in
+  English (organized from Mx-Shell's structure).

@@ -2,7 +2,10 @@
 
 > A methodology + prompt library + Claude Code Skill for writing
 > cinematic AI shortfilm prompts.
-> Built from a deep dive into Mx-Shell's *Zombie Cleaner* —
+>
+> **Organized from materials Mx-Shell himself publicly distributed**:
+> his prompt collection documents (shared in his fan group) and his
+> May 12, 2026 Douyin livestream. The work behind *Zombie Cleaner* —
 > the AI short Hollywood director **PJ Ace** called
 > *"one of the best short films in recent years."*
 
@@ -48,20 +51,23 @@ ai-shortfilm-prompts/
 ├── LICENSE                MIT (this work)
 ├── NOTICE                 Attribution + Mx-Shell ARR details (dual-licensing)
 │
-├── 原始提示词/             Mx-Shell's complete prompts (kept in Chinese,
-│                           filenames preserved as he wrote them)
-│   ├── 索引.md             Index
-│   ├── 丧尸清道夫.md       Zombie Cleaner
-│   ├── 假面骑士-变身系列.md  Kamen Rider transformation series (5 variants)
-│   ├── 卡莎-LOL变身.md      League of Legends Kai'Sa transformation
-│   ├── 环太平洋-高达.md     Pacific Rim + Gundam mech-drop
-│   ├── 赛博江湖.md          Cyber-wuxia template
-│   └── 合金装备-武器充能与打斗.md  Metal Gear-style weapon-charge + combat
+├── prompts/                Mx-Shell's complete original prompts.
+│                           Body kept in Chinese (his authorial
+│                           voice), with English header on each file.
+│   ├── README.md           Index of all prompt archives
+│   ├── zombie-cleaner.md             *Zombie Cleaner*
+│   ├── kamen-rider-transformations.md   Kamen Rider transformation × 5 variants
+│   ├── kaisa-transformation.md       LoL Kai'Sa transformation × 3 versions
+│   ├── pacific-rim-gundam.md         Pacific Rim + Gundam mech-drop
+│   ├── cyber-wuxia.md                Shaw Brothers + steampunk wuxia template
+│   └── metal-gear-charge-combat.md   Weapon-charge + combat composite
 │
-├── 模板/                   Generalized templates (IP-stripped reusable bones)
-│   ├── 15秒变身模板.md      15-second transformation
-│   ├── 多分镜叙事模板.md     Multi-shot narrative
-│   └── 风格画质骨架.md       7 reusable atmosphere/look prefabs
+├── templates/              IP-stripped generalized templates (English).
+│                           Authored by jnMetaCode based on Mx-Shell's structure.
+│   ├── 15s-transformation.md         15-second transformation
+│   ├── multi-shot-narrative.md       Multi-shot edited narrative
+│   └── atmosphere-prefabs.md         8 reusable atmosphere/look prefabs
+│   ├── *.zh.md             Chinese versions of the above
 │
 ├── .claude/skills/shortfilm-prompt/   Claude Code Skill
 │   ├── SKILL.md            How Claude should generate prompts (7 hard rules + 10-item checklist)

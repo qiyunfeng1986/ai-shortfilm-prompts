@@ -1,12 +1,29 @@
-# 《合金装备》武器充能 + 打斗提示词
+# Metal Gear-style Weapon Charge + Combat — Original Prompts
 
-> 来源：mx-shell 提示词合集 (2026.03.15)
+> **Source**: Excerpted from Mx-Shell's publicly shared prompt
+> collection (March 15, 2026 document).
 >
-> **原作者备注**：
-> > 这个视频是后期剪辑的，按现在 Seedance 的智商，一次出成品的概率极低，我是抽了好几次卡，然后自己后期剪辑拼接的。
-> > 字数少，手机可以做，但同样是需要 Seedance 2.0 模型。
-> > 版权问题依旧是使用参考图，参考图可以自己用 AI 生成。这部作品是用了多个片段后期剪辑的，并且分了前后两段（武器充能 + 打斗）生成，想要同样效果的兄弟需要自己有一定的后期功底。
-> > 作图流程我是用 MJ 或者 Seedream 生图，Flux 优化材质和画面真实感，Nanobanana 出三视图。如果你在某一个步骤出的图片可以达到理想效果就可以省略其他的。
+> Two independent prompts (weapon-charge ~10s + combat ~15s) plus
+> four image-generation reference prompts (scene / monster / weapon /
+> power armor). The final video is post-edited from multiple
+> generations — Mx-Shell rerolled many times then assembled in post.
+>
+> **Original author's notes** (Mx-Shell):
+> > "This video is post-edited. Given Seedance's current capability,
+> > the one-shot success rate is extremely low. I rerolled many times
+> > then assembled in post. Required: Seedance 2.0 (not Fast).
+> >
+> > Image-gen workflow: I used MJ or Seedream to draft, Flux Max to
+> > refine texture, Nanobanana for three-views. Skip steps if an
+> > earlier one already gives what you need."
+>
+> **Note on content**: Body in Chinese — Mx-Shell's original writing,
+> kept untranslated. See [methodology.md](../methodology.md) for the
+> English structural breakdown.
+
+---
+
+# 《合金装备》武器充能 + 打斗提示词（原文）
 
 ---
 

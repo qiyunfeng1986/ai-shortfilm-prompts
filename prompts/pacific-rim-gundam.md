@@ -1,8 +1,26 @@
-# 《环太平洋 + 高达 + 头号玩家》提示词（优化版）
+# Pacific Rim + Gundam + Ready Player One — Original Prompts (Optimized)
 
-> 来源：mx-shell 提示词合集 (2026.03.15)
+> **Source**: Excerpted from Mx-Shell's publicly shared prompt
+> collection (March 15, 2026 document).
 >
-> **注意（原作者警告）**：提示词超字数，要用网页端做，用手机的尝试自己删减。版权问题依旧是使用参考图，人物装备和机甲造型的参考图可以自己用 AI 生成。现在模型降智严重，生成崩坏几率非常大，容易出现穿帮和不听提示词指令的情况，自己考虑要不要用。
+> A 15-second one-shot mech drop sequence. Person dives off an
+> airship at 10,000m altitude → activates virtual gauntlet → 85-meter
+> mech materializes around them via red wireframe + digital cubes →
+> mech slams into the ocean → rises facing a bioluminescent kaiju.
+>
+> **Original author's warning** (Mx-Shell): Prompt exceeds the
+> character limit — must use web client. IP concerns require reference
+> images for character gear and mech (which you can generate with AI).
+> Current models have degraded performance, breakdown rate is high,
+> camera/instruction non-compliance is common. Use at your own risk.
+>
+> **Note on content**: Body in Chinese — Mx-Shell's original writing,
+> kept untranslated. See [methodology.md](../methodology.md) for the
+> English structural breakdown.
+
+---
+
+# 《环太平洋 + 高达 + 头号玩家》提示词（原文 · 优化版）
 
 ---
 

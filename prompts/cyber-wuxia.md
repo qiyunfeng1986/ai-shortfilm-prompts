@@ -1,10 +1,24 @@
-# 《赛博江湖》提示词模板
+# Cyber Wuxia — Original Prompt Template
 
-> 来源：mx-shell 提示词合集 (2026.03.15)
+> **Source**: Excerpted from Mx-Shell's publicly shared prompt
+> collection (March 15, 2026 document).
 >
-> 原作者备注：**只能给你一个模版，画面内容需要自己想象自己写。**
+> Original author's note: **"I can only give you the template — the
+> content you have to imagine and write yourself."**
 >
-> 这是一份"画质 + 风格"骨架，没有具体分镜。Mx-Shell 把"画面内容"留给使用者自由发挥。
+> This is a "visual-quality + style" skeleton without a specific
+> storyboard. Subject: a young Ming-dynasty East-Asian eunuch
+> figure with steampunk silver mechanical cybernetics on the right
+> side of his face, in a misty courtyard at night. Mx-Shell leaves
+> the actual story content open for the user to fill in.
+>
+> **Note on content**: Body in Chinese — Mx-Shell's original writing,
+> kept untranslated. See [methodology.md](../methodology.md) for the
+> English structural breakdown.
+
+---
+
+# 《赛博江湖》提示词模板（原文）
 
 ---
 
