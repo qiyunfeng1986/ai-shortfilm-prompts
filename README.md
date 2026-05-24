@@ -53,6 +53,37 @@ keyword everyone else uses. Full breakdown in
 
 ---
 
+## ❌ vs ✅ — what the method actually changes
+
+Same idea: *a female mech warrior raises an energy shield in a thunderstorm.*
+
+**❌ The naive prompt** (what most people write):
+
+```
+Epic cinematic shot of a beautiful female mech warrior activating a
+stunning energy shield in the rain. Highly detailed, 4K, photorealistic,
+movie-quality, dramatic lighting.
+```
+
+Vague praise — *epic / stunning / 4K / movie-quality* — gives the model
+nothing concrete to anchor to. You get generic game-CG output.
+
+**✅ With the 5-stage method** (excerpt):
+
+```
+Core theme: gritty hard sci-fi mech | rainy dock | battle-damage aesthetic | energy shield | post-apocalyptic live-action
+Atmosphere: simulated IMAX film camera + Panavision C-series (35mm, f/4). Low-saturation teal base, film grain.
+Camera: handheld — extremely subtle, breath-like float throughout.
+9–12s: hexagonal energy cells light up unevenly, some flicker as if faulty; rain bends around a 2m dome.
+Ending: no dialogue, no light burst — just rain vaporizing on the shield, a lightning flash across the dock.
+```
+
+Real camera/lens names + physical reactions + battle damage + an empty
+ending = visceral realism. Full sample with the 10-item self-check:
+[examples/02-skill-output-sample.md](./.claude/skills/shortfilm-prompt/examples/02-skill-output-sample.md).
+
+---
+
 ## The story
 
 May 2026. A 29-year-old vocational-school graduate from rural Yunnan,
@@ -120,6 +151,10 @@ ai-shortfilm-prompts/
 ---
 
 ## TL;DR — The 5-stage prompt structure
+
+<p align="center">
+  <img src="./assets/5-stage-structure.svg" alt="The 5-stage prompt structure" width="660">
+</p>
 
 Every Mx-Shell video prompt follows the same skeleton. The order matters:
 
@@ -226,6 +261,15 @@ by [@jnMetaCode](https://github.com/jnMetaCode):
 
 All projects share the same `SKILL.md` format. The video skill stacks
 freely with any of them.
+
+---
+
+## Contributing
+
+The roadmap is to collect more AI-shortfilm creators' methods, structured the
+same way. New prompts, templates, fixes, and translations are welcome — see
+[CONTRIBUTING.md](./CONTRIBUTING.md) for the submission template and rules
+(public source required, credit the original creator).
 
 ---
 

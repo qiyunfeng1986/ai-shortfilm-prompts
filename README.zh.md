@@ -44,6 +44,41 @@
 
 ---
 
+## 5 段式结构一览
+
+<p align="center">
+  <img src="./assets/5-stage-structure.zh.svg" alt="5 段式提示词结构" width="660">
+</p>
+
+每条 Mx-Shell 的视频提示词都是这套骨架，**顺序很重要**。完整讲解见 [方法论](./methodology.zh.md)。
+
+---
+
+## ❌ vs ✅ —— 这套方法到底改了什么
+
+同一个想法：*女机甲战士在暴雨雷暴中开启能量护盾。*
+
+**❌ 大多数人写的：**
+
+```
+史诗级电影感镜头，一个漂亮的女机甲战士在雨中开启震撼的能量护盾。
+高细节，4K，照片级真实，电影质感，戏剧化灯光。
+```
+
+"史诗 / 震撼 / 4K / 电影质感"这种空泛词，AI 抓不到任何具体锚点 —— 产出的就是泛泛的游戏 CG 感。
+
+**✅ 用 5 段式方法（节选）：**
+
+```
+核心主题：写实硬核机甲 | 雷雨码头 | 战损美学 | 能量护盾 | 末日真人演绎
+氛围画质：模拟 IMAX 胶片摄影机 + Panavision C 系列（35mm，f/4）。低饱和青绿主调，胶片颗粒。
+运镜：手持，全程极其轻微、如呼吸般的浮动。
+9–12 秒：六边形能量单元逐格亮起、覆盖不均，部分如故障般闪烁；雨水沿 2 米伞状能量场绕开。
+结尾：没有台词、没有炫光 —— 只有雨水打在护盾上汽化，远处一道闪电照亮码头。
+```
+
+真实摄影机/镜头型号 + 物理反馈 + 战损细节 + 留白结尾 = 那种"真"的质感。完整样本（含 10 条自检）见 [examples/02-skill-output-sample.md](./.claude/skills/shortfilm-prompt/examples/02-skill-output-sample.md)。
+
 ---
 
 ## 故事
@@ -65,53 +100,49 @@
 
 ```
 ai-shortfilm-prompts/
-├── README.md                  ← 你在看的这一份
-├── LICENSE                    ← MIT
-├── .claude-plugin/            ← plugin 元数据（plugin.json + marketplace.json）
-├── 方法论.md                  ← Mx-Shell 的 5 段式提示词模板讲解 ⭐
-├── 实战FAQ.md                 ← 整合的 17 条 + 直播 Q&A
-├── 原始提示词/                ← Mx-Shell 公开过的 10+ 个完整作品
-│   ├── 索引.md
-│   ├── 丧尸清道夫.md          ← 标志作
-│   ├── 假面骑士-变身系列.md   ← 5 个变体共享一套模板
-│   ├── 卡莎-LOL变身.md        ← 15s / 20s / 5s 三个版本
-│   ├── 环太平洋-高达.md       ← 重型机甲跳机 + FPV 运镜
-│   ├── 赛博江湖.md            ← 邵氏 + 蒸汽朋克模板
-│   └── 合金装备-武器充能与打斗.md ← 后期剪辑型动作戏
-├── 模板/                       ← 去掉 IP 的通用骨架
-│   ├── 15秒变身模板.md
-│   ├── 多分镜叙事模板.md
-│   └── 风格画质骨架.md         ← 7 种可复用的氛围段
-├── 教程/                       ← 可以直接发布到各平台的二次创作内容
-│   ├── README.md               ← 分发策略
-│   ├── 公众号长文-丧尸清道夫拆解.md  ← ~5000 字深度版
-│   └── 抖音小红书短文版.md          ← 短平快版（抖音/小红书/Twitter）
-├── .claude/skills/shortfilm-prompt/  ← Claude Code Skill
-│   └── SKILL.md                ← /shortfilm-prompt 调用后自动生成提示词
-├── 来源与致谢.md
-└── 资料/                       ← 原始 docx / 直播 mp4 / pandoc 转换的 md
-    ├── 直播回放切片.mp4
-    ├── mx-shell提示词+问题解决方案（2026.03.15).docx
-    ├── mx-shell提示词合集+问题解决方案(2026.05.10).docx
-    ├── 直播回放文字版1.doc
-    ├── 直播回放文字版2.doc
-    ├── 视频说明.md              ← 视频内容说明 + 处理建议
-    ├── 视频截图/                ← 6 张直播关键帧（可作教程配图）
-    └── markdown/              ← pandoc 转出来的 md 归档
+├── README.md / README.zh.md         ← 你在看的这一份（中英双语）
+├── methodology.md / .zh.md          ← Mx-Shell 的 5 段式提示词模板讲解 ⭐
+├── faq.md / .zh.md                  ← 整合的 17 条 + 直播 Q&A
+├── credits.md / .zh.md              ← 来源与致谢
+├── LICENSE                          ← MIT（本仓库整理内容）
+├── NOTICE / NOTICE.zh               ← 署名 + Mx-Shell 原作版权说明（双授权）
+│
+├── prompts/                         ← Mx-Shell 公开过的完整原始提示词
+│   ├── README.md                    ← 索引
+│   ├── zombie-scavenger.md          ← 标志作《丧尸清道夫》
+│   ├── kamen-rider-transformations.md  ← 假面骑士变身 × 5 变体
+│   ├── kaisa-transformation.md      ← LOL 卡莎变身 × 3 版本
+│   ├── pacific-rim-gundam.md        ← 环太平洋 + 高达跳机
+│   ├── cyber-wuxia.md               ← 邵氏 + 蒸汽朋克江湖模板
+│   └── metal-gear-charge-combat.md  ← 武器充能 + 打斗复合段
+│
+├── templates/                       ← 去掉 IP 的通用骨架（中英双语）
+│   ├── 15s-transformation.md        ← 15 秒变身
+│   ├── multi-shot-narrative.md      ← 多分镜叙事
+│   └── atmosphere-prefabs.md        ← 8 个可复用氛围/画质骨架
+│
+├── .claude/skills/shortfilm-prompt/ ← Claude Code Skill
+│   ├── SKILL.md                     ← /shortfilm-prompt 调用后自动生成提示词
+│   ├── TESTING.md                   ← 如何在另一个 Claude 窗口做严格测试
+│   └── examples/                    ← 5 个测试用例 + 期望输出
+│
+└── .claude-plugin/                  ← plugin 元数据（plugin.json + marketplace.json）
 ```
+
+> 原始 docx、直播录像、视频截图等版权敏感素材未上传 GitHub（保留在本地），仓库只收录整理后的纯文档。
 
 ---
 
 ## 怎么读
 
-**如果你只有 10 分钟** → 读 [方法论.md](./方法论.md)。
+**如果你只有 10 分钟** → 读 [方法论](./methodology.zh.md)。
 那里讲了 Mx-Shell 反复使用的 5 段式结构，看完你大概就能开始自己写。
 
 **如果你想自己做一部变身/丧尸/MV 短片**：
-1. 先看 [方法论.md](./方法论.md) 理解结构
-2. 翻 [原始提示词/](./原始提示词/) 找一个最接近你想做的作品
-3. 翻 [模板/](./模板/) 找一份去 IP 的骨架，填上自己的设定
-4. 翻 [实战FAQ.md](./实战FAQ.md) 看遇到具体问题怎么处理
+1. 先看 [方法论](./methodology.zh.md) 理解结构
+2. 翻 [原始提示词](./prompts/) 找一个最接近你想做的作品
+3. 翻 [模板](./templates/) 找一份去 IP 的骨架，填上自己的设定
+4. 翻 [实战 FAQ](./faq.zh.md) 看遇到具体问题怎么处理
 
 **如果你用 Claude Code**：
 把 `.claude/skills/shortfilm-prompt/` 拷到你的工作目录（或 `~/.claude/skills/` 全局可用），然后输入 `/shortfilm-prompt` —— Skill 会问你几个问题然后帮你写提示词。
@@ -207,7 +238,13 @@ Mx-Shell 自述他用的工具栈（数据来自直播 + 文档）：
 
 **PJ Ace（@PJaccetturo）** —— 好莱坞导演，最初点赞《丧尸清道夫》让它出圈。
 
-详见 [来源与致谢.md](./来源与致谢.md)。
+详见 [来源与致谢](./credits.zh.md)。
+
+---
+
+## 投稿
+
+路线图是收录更多 AI 短片创作者的方法，用同一套结构整理。欢迎投稿新提示词、模板、修正和翻译改进 —— 投稿模板与规则见 [CONTRIBUTING.md](./CONTRIBUTING.md)（须有公开来源、给原作者署名）。
 
 ---
 
