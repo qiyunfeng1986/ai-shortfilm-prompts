@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/jnMetaCode/ai-shortfilm-prompts?style=social)](https://github.com/jnMetaCode/ai-shortfilm-prompts)
-[![X Post](https://img.shields.io/badge/PJ_Ace_tweet-13.4M_views-1DA1F2?logo=x)](https://x.com/PJaccetturo/status/2053475534965965067)
+[![X 推文](https://img.shields.io/badge/原文解析-@aibuzhiyu-1DA1F2?logo=x)](https://x.com/aibuzhiyu/status/2056426660577288645)
 [![Plugin](https://img.shields.io/badge/Claude_Code-一键安装-blueviolet)](#安装claude-code-用户)
 
 > AI 短片提示词写作的开源方法库 + 案例集 + Claude Code Skill。
@@ -20,7 +20,7 @@
 > *Film name: Zombie Scavenger by MX-Shell.*
 >
 > —— **PJ Ace** ([@PJaccetturo](https://x.com/PJaccetturo))
-> [2026 年 5 月 10 日](https://x.com/PJaccetturo/status/2053475534965965067)
+> [2026 年 5 月 10 日](https://x.com/aibuzhiyu/status/2056426660577288645)
 
 | 1340 万 浏览 | 82K 点赞 | 7.4K 转发 | 39K 收藏 | 2.3K 评论 |
 |---|---|---|---|---|

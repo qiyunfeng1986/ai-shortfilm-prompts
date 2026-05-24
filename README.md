@@ -2,11 +2,11 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/jnMetaCode/ai-shortfilm-prompts?style=social)](https://github.com/jnMetaCode/ai-shortfilm-prompts)
-[![X Post](https://img.shields.io/badge/PJ_Ace_tweet-13.4M_views-1DA1F2?logo=x)](https://x.com/PJaccetturo/status/2053475534965965067)
+[![X Post](https://img.shields.io/badge/read_the_thread-@aibuzhiyu-1DA1F2?logo=x)](https://x.com/aibuzhiyu/status/2056426660577288645)
 [![Plugin](https://img.shields.io/badge/Claude_Code-plugin_install-blueviolet)](#install-claude-code)
 
 > The complete methodology + prompt library + Claude Code Skill behind
-> **[*Zombie Scavenger*](https://x.com/PJaccetturo/status/2053475534965965067)**
+> **[*Zombie Scavenger*](https://x.com/aibuzhiyu/status/2056426660577288645)**
 > by Mx-Shell — the AI short Hollywood director PJ Ace called
 > *"one of the best short films I've seen in years."*
 
@@ -22,7 +22,7 @@
 > *Film name: Zombie Scavenger by MX-Shell.*
 >
 > — **PJ Ace** ([@PJaccetturo](https://x.com/PJaccetturo)),
-> [May 10, 2026](https://x.com/PJaccetturo/status/2053475534965965067)
+> [May 10, 2026](https://x.com/aibuzhiyu/status/2056426660577288645)
 
 | 13.4M views | 82K likes | 7.4K reposts | 39K bookmarks | 2.3K replies |
 |---|---|---|---|---|
