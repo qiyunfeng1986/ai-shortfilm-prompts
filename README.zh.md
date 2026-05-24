@@ -1,5 +1,25 @@
 # ai-shortfilm-prompts · AI 短片提示词方法论
 
+<!-- ════════════════════════════════════════════════════════════════════
+     README 顶部 demo 片位 —— 把 15 秒 demo 放这里。
+     这条片由 ./assets/demo-prompt.md 生成（提示词是本仓库 Skill 写的）。
+
+     出片后二选一启用：
+
+     (A) mp4 —— 把 demo.mp4 拖进任意 GitHub issue/PR 评论框，复制生成的
+         https://user-images.githubusercontent.com/... 链接，取消注释粘贴：
+     <p align="center">
+       <video src="把GitHub视频URL粘到这里" width="720" autoplay loop muted playsinline></video>
+       <br><sub>▶ 15 秒 demo —— 由本仓库 Skill 写的提示词生成（<a href="./assets/demo-prompt.md">提示词</a>）</sub>
+     </p>
+
+     (B) gif —— 提交 assets/demo.gif，取消注释：
+     <p align="center">
+       <img src="./assets/demo.gif" alt="用 5 段式方法生成的 15 秒 demo" width="720">
+       <br><sub>▶ 15 秒 demo —— 由本仓库 Skill 写的提示词生成（<a href="./assets/demo-prompt.md">提示词</a>）</sub>
+     </p>
+════════════════════════════════════════════════════════════════════ -->
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 [![GitHub stars](https://img.shields.io/github/stars/jnMetaCode/ai-shortfilm-prompts?style=social)](https://github.com/jnMetaCode/ai-shortfilm-prompts)
 [![X 推文](https://img.shields.io/badge/原文解析-@aibuzhiyu-1DA1F2?logo=x)](https://x.com/aibuzhiyu/status/2056426660577288645)

@@ -8,6 +8,19 @@ library — **made something with it? [Submit it](./CONTRIBUTING.md).**
 
 ---
 
+## 🤖 This repo's own demo · 本仓库自己的 demo
+
+The 15-second clip at the top of the README — *"Scavenger Awakening"*, an
+atom-punk salvage robot powering up in dusk ruins — was generated from a
+prompt **written by this repo's own `/shortfilm-prompt` Skill**. Eating our
+own dog food: [assets/demo-prompt.md](./assets/demo-prompt.md).
+
+> README 顶部那条 15 秒片《拾荒者苏醒》（原子朋克拾荒机器人在废墟黄昏充能），
+> 提示词由**本仓库自带的 `/shortfilm-prompt` Skill** 写出 —— 自己吃自己的狗粮：
+> [assets/demo-prompt.md](./assets/demo-prompt.md)。
+
+---
+
 ## ⭐ The one that started it all · 起点之作
 
 ### Zombie Scavenger · 丧尸清道夫 — by Mx-Shell
