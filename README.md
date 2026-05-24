@@ -271,6 +271,8 @@ same way. New prompts, templates, fixes, and translations are welcome — see
 [CONTRIBUTING.md](./CONTRIBUTING.md) for the submission template and rules
 (public source required, credit the original creator).
 
+Made something with the method? It goes on the [showcase](./showcase.md).
+
 ---
 
 ## License
