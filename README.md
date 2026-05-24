@@ -27,6 +27,8 @@
 | 13.4M views | 82K likes | 7.4K reposts | 39K bookmarks | 2.3K replies |
 |---|---|---|---|---|
 
+<sub>Stats are from PJ Ace's original tweet ([@PJaccetturo](https://x.com/PJaccetturo), May 10, 2026), as of mid-May 2026.</sub>
+
 This repository is **the complete workflow behind that film**, made
 available because Mx-Shell himself published his prompt collection
 documents and walked through his entire method on a public Douyin
