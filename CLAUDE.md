@@ -6,7 +6,9 @@ Conventions for working in this repo. Read before editing.
 
 A bilingual (EN/中文) methodology + prompt library + Claude Code Skill for
 writing cinematic AI-video prompts, built from Mx-Shell's *Zombie Scavenger*
-method. Pure docs + one Skill — no build, no tests to run.
+method. Pure docs + one Skill, no build step. Two CI checks: a dead-link
+scan (`.github/workflows/links.yml`) and LLM-judge skill evals
+(`.github/workflows/evals.yml` + `evals/`, needs the `ANTHROPIC_API_KEY` secret).
 
 ## Hard conventions
 

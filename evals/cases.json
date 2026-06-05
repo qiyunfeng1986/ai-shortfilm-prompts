@@ -1,0 +1,18 @@
+[
+  {
+    "id": "mecha-energy-shield",
+    "input": "Help me write a 15-second single-shot prompt: a female mech warrior raises an energy shield in a thunderstorm at a rainy dock. Gritty hard sci-fi, battle-damaged, live-action feel."
+  },
+  {
+    "id": "robot-transformation",
+    "input": "I want a 15s robot transformation. Green color palette, energy core in the belt buckle, post-apocalyptic jungle background."
+  },
+  {
+    "id": "weapon-charge-combat",
+    "input": "Write a weapon-charge-then-combat sequence in two segments: a lone warrior charges a heavy energy weapon, then fights. Cinematic, weighty impacts."
+  },
+  {
+    "id": "multi-shot-narrative",
+    "input": "A multi-shot narrative short: a small salvage robot wanders into an abandoned seaside bar at dusk and is startled by a noise behind the counter."
+  }
+]

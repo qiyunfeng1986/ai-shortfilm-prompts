@@ -1,0 +1,38 @@
+# Skill evals — generate prompts from SKILL.md and score them with an LLM judge
+# against the 10-item self-check. Keeps the skill honest: if an edit to SKILL.md
+# regresses prompt quality, this goes red. See evals/README.md.
+#
+# Requires the ANTHROPIC_API_KEY repo secret. On fork PRs (no secret) the runner
+# skips gracefully instead of failing.
+name: Skill evals
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'skills/**'
+      - 'evals/**'
+      - '.github/workflows/evals.yml'
+  pull_request:
+    paths:
+      - 'skills/**'
+      - 'evals/**'
+      - '.github/workflows/evals.yml'
+  workflow_dispatch:
+
+jobs:
+  evals:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet anthropic
+      - name: Run skill evals
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          GEN_MODEL: claude-sonnet-4-6
+          JUDGE_MODEL: claude-sonnet-4-6
+          EVAL_THRESHOLD: '8'
+        run: python evals/run_evals.py
