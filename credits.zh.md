@@ -106,6 +106,8 @@ Mx-Shell 在分享时明确表态过开放：
 
 ## 第三方引用
 
+- **Jesse Vincent（@obra）** —— [superpowers](https://github.com/obra/superpowers) SKILL 体系的作者。本仓库使用的 `SKILL.md` frontmatter 格式 + TDD 式 skill 编写方法源自他的工作。
+
 ### 致谢传播
 
 - **PJ Ace（@PJaccetturo）** —— 好莱坞导演。最先发推称《丧尸清道夫》为"近年来最佳短片之一"并寻找原作者，让这部短片走向英语圈观众。

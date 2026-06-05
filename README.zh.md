@@ -140,7 +140,7 @@ ai-shortfilm-prompts/
 │   ├── README.md                    ← 索引
 │   ├── index.json                   ← 机器可读的提示词索引
 │   ├── zombie-scavenger.md          ← 标志作《丧尸清道夫》
-│   ├── kamen-rider-transformations.md  ← 假面骑士变身 × 5 变体
+│   ├── kamen-rider-transformations.md  ← 假面骑士变身 × 6（5 骑士 + 飞行版）
 │   ├── kaisa-transformation.md      ← LOL 卡莎变身 × 3 版本
 │   ├── pacific-rim-gundam.md        ← 环太平洋 + 高达跳机
 │   ├── cyber-wuxia.md               ← 邵氏 + 蒸汽朋克江湖模板
@@ -149,7 +149,8 @@ ai-shortfilm-prompts/
 ├── templates/                       ← 去掉 IP 的通用骨架（中英双语）
 │   ├── 15s-transformation.md        ← 15 秒变身
 │   ├── multi-shot-narrative.md      ← 多分镜叙事
-│   └── atmosphere-prefabs.md        ← 8 个可复用氛围/画质骨架
+│   ├── atmosphere-prefabs.md        ← 8 个可复用氛围/画质骨架
+│   └── negative-prompts.md          ← 负向提示词预制件（按模型）
 │
 ├── assets/                          ← 图示 + README 顶部 demo 提示词
 │   ├── demo-prompt.md               ← Skill 写的可复制 15 秒提示词（顶部片位）

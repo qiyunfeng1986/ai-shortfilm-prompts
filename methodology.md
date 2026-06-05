@@ -268,7 +268,7 @@ Restraint reads more elevated than excess.
 
 - [prompts/](./prompts/) — Mx-Shell's complete original prompts
   (Chinese body untouched, English header on each file).
-  Includes *Zombie Scavenger*, *Kamen Rider* (5 variants), *Kai'Sa*
+  Includes *Zombie Scavenger*, *Kamen Rider* (6 variants), *Kai'Sa*
   (15s/20s/5s), *Pacific Rim + Gundam*, *Cyber-Wuxia*, *Metal Gear*.
 - [templates/](./templates/) — IP-stripped reusable skeletons in
   English (organized from Mx-Shell's structure).

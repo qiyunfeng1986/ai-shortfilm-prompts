@@ -52,7 +52,7 @@ These are full prompt archives in this repo — study them, remix them.
 
 | Work · 作品 | Type · 类型 | Breakdown · 拆解 |
 |---|---|---|
-| Kamen Rider transformations · 假面骑士变身 | Transformation × 5 variants | [prompts/kamen-rider-transformations.md](./prompts/kamen-rider-transformations.md) |
+| Kamen Rider transformations · 假面骑士变身 | Transformation × 6 variants | [prompts/kamen-rider-transformations.md](./prompts/kamen-rider-transformations.md) |
 | Kai'Sa transformation · 卡莎变身 | Transformation × 3 versions | [prompts/kaisa-transformation.md](./prompts/kaisa-transformation.md) |
 | Pacific Rim + Gundam · 环太平洋 + 高达 | Mech-drop + FPV | [prompts/pacific-rim-gundam.md](./prompts/pacific-rim-gundam.md) |
 | Cyber-wuxia · 赛博江湖 | Shaw Bros + steampunk | [prompts/cyber-wuxia.md](./prompts/cyber-wuxia.md) |

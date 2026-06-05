@@ -18,8 +18,8 @@
 
   - methodology.md / methodology.zh.md
   - faq.md / faq.zh.md
-  - 模板/ 目录全部内容
-  - .claude/skills/shortfilm-prompt/（SKILL.md / TESTING.md / examples/）
+  - templates/ 目录全部内容
+  - skills/shortfilm-prompt/（SKILL.md / TESTING.md / examples/）
   - .claude-plugin/ 元数据
   - credits.md / credits.zh.md
   - README.md / README.zh.md
@@ -34,7 +34,7 @@
 
 适用范围：
 
-  - 原始提示词/ 目录中标注「来源：mx-shell 提示词合集」的所有完整提示词原文
+  - prompts/ 目录中标注「来源：mx-shell 提示词合集」的所有完整提示词原文
     （《丧尸清道夫》、《假面骑士-变身系列》、《卡莎-LOL变身》、《环太平洋-高达》、
      《赛博江湖》、《合金装备-武器充能与打斗》等）
   - faq.md / credits.md / methodology.md 等文件中以引号或 blockquote 形式
