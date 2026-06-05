@@ -7,6 +7,8 @@
 >
 > 本仓库 README 顶部的 demo 片由这条提示词生成，提示词由本仓库自带的
 > `/shortfilm-prompt` Skill 写出（自己吃自己的狗粮）。jnMetaCode 原创，**MIT**。
+>
+> 英文版（投 Veo / 可灵 / Sora 国际版）：[demo-prompt.en.md](./demo-prompt.en.md)
 
 ```
 核心主题：写实硬核机甲 | 原子朋克末日拾荒者 | 废墟黄昏 | 战损美学 | 绿色能量核充能 | 无游戏 CG 感
