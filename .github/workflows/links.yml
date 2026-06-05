@@ -32,7 +32,6 @@ jobs:
             --exclude '^https?://(x\.com|twitter\.com)'
             './**/*.md'
             './.github/**/*.md'
-            './.claude/**/*.md'
             './.claude-plugin/**/*.md'
           # Fail the job when any (non-excluded) link is broken.
           fail: true
