@@ -143,7 +143,9 @@ ai-shortfilm-prompts/
 │   ├── 15s-transformation.md        ← 15 秒变身
 │   ├── multi-shot-narrative.md      ← 多分镜叙事
 │   ├── atmosphere-prefabs.md        ← 8 个可复用氛围/画质骨架
-│   └── negative-prompts.md          ← 负向提示词预制件（按模型）
+│   ├── negative-prompts.md          ← 负向提示词预制件（按模型）
+│   ├── genre-camera-sop.md          ← 五大类型片运镜 SOP
+│   └── pet-lifetime-narrative.md    ← 实战范例：萌宠亲情情感叙事
 │
 ├── assets/                          ← 图示 + README 顶部 demo 提示词
 │   ├── demo-prompt.md               ← Skill 写的可复制 15 秒提示词（顶部片位）

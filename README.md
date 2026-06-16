@@ -169,7 +169,9 @@ ai-shortfilm-prompts/
 │   ├── 15s-transformation.md         15-second transformation
 │   ├── multi-shot-narrative.md       Multi-shot edited narrative
 │   ├── atmosphere-prefabs.md         8 reusable atmosphere/look prefabs
-│   └── negative-prompts.md           Reusable negative-prompt prefab (per-model)
+│   ├── negative-prompts.md           Reusable negative-prompt prefab (per-model)
+│   ├── genre-camera-sop.md           Camera-movement SOP for 5 film genres
+│   └── pet-lifetime-narrative.md     Worked example: pet × family emotional narrative
 │
 ├── assets/                 Diagrams + the README hero-demo prompt.
 │   ├── demo-prompt.md       Copy-paste 15s prompt the Skill wrote (hero slot)
