@@ -1,0 +1,28 @@
+name: deploy
+
+# 每次改 docs/（或部署配置）推到 main，自动把展示页发布到 Cloudflare Workers。
+# 用仓库 Secrets：CLOUDFLARE_API_TOKEN + CLOUDFLARE_ACCOUNT_ID。
+on:
+  push:
+    branches: [main]
+    paths:
+      - "docs/**"
+      - "wrangler.toml"
+      - ".github/workflows/deploy.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Deploy to Cloudflare Workers
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          command: deploy
+        env:
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
