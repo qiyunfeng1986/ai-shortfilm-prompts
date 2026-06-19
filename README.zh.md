@@ -316,6 +316,20 @@ Mx-Shell 自述他用的工具栈（数据来自直播 + 文档）：
 
 ---
 
+## 关注作者
+
+<p>
+  <img src="docs/assets/qr-wechat.jpg" width="168" alt="微信公众号 AI 不止语">
+  &nbsp;&nbsp;
+  <img src="docs/assets/qr-douyin.jpg" width="168" alt="抖音 AI 不止语">
+</p>
+
+微信公众号「**AI 不止语**」 · 抖音 **@AI不止语**（AIBZY） · [X @jnMetaCode](https://x.com/jnMetaCode) · [aiOlaOla — 免费学 AI 编程](https://aiolaola.com/)
+
+🌐 在线提示词库 → **[prompts.aiolaola.com](https://prompts.aiolaola.com)**
+
+---
+
 ## License（双重许可）
 
 - **jnMetaCode 原创工作**（方法论 / FAQ / 模板 / Skill / 元数据）—— **[MIT License](./LICENSE)**，免费使用包括商业用途，保留版权声明即可

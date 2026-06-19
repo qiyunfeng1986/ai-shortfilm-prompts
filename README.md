@@ -342,6 +342,20 @@ Made something with the method? It goes on the [showcase](./showcase.md).
 
 ---
 
+## Follow · 关注作者
+
+<p>
+  <img src="docs/assets/qr-wechat.jpg" width="168" alt="WeChat 公众号 AI 不止语">
+  &nbsp;&nbsp;
+  <img src="docs/assets/qr-douyin.jpg" width="168" alt="抖音 AI 不止语">
+</p>
+
+微信公众号「**AI 不止语**」 · 抖音 **@AI不止语**（AIBZY） · [X @jnMetaCode](https://x.com/jnMetaCode) · [aiOlaOla — 免费学 AI 编程](https://aiolaola.com/)
+
+🌐 Live prompt library → **[prompts.aiolaola.com](https://prompts.aiolaola.com)**
+
+---
+
 ## License
 
 **[MIT License](./LICENSE)** for everything authored by jnMetaCode
