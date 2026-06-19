@@ -156,7 +156,9 @@ ai-shortfilm-prompts/
 │   ├── negative-prompts.md          ← 负向提示词预制件（按模型）
 │   ├── genre-camera-sop.md          ← 五大类型片运镜 SOP
 │   ├── camera-move-library.md       ← 五大技法模块 50 式运镜库
-│   └── pet-lifetime-narrative.md    ← 实战范例：萌宠亲情情感叙事
+│   ├── pet-lifetime-narrative.md    ← 实战范例：萌宠亲情情感叙事
+│   ├── family-recipe-farewell.md    ← 实战范例：妈妈的菜谱·传承
+│   └── elderly-cat-companion.md     ← 实战范例：奶奶与猫·留守陪伴
 │
 ├── assets/                          ← 图示 + README 顶部 demo 提示词
 │   ├── demo-prompt.md               ← Skill 写的可复制 15 秒提示词（顶部片位）

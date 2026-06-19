@@ -182,7 +182,9 @@ ai-shortfilm-prompts/
 │   ├── negative-prompts.md           Reusable negative-prompt prefab (per-model)
 │   ├── genre-camera-sop.md           Camera-movement SOP for 5 film genres
 │   ├── camera-move-library.md        50 camera moves in 5 technique modules
-│   └── pet-lifetime-narrative.md     Worked example: pet × family emotional narrative
+│   ├── pet-lifetime-narrative.md     Worked example: pet × family emotional narrative
+│   ├── family-recipe-farewell.md     Worked example: a mother's recipe handed down
+│   └── elderly-cat-companion.md      Worked example: grandmother & cat, empty-nest
 │
 ├── assets/                 Diagrams + the README hero-demo prompt.
 │   ├── demo-prompt.md       Copy-paste 15s prompt the Skill wrote (hero slot)
