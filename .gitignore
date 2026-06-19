@@ -34,3 +34,16 @@ node_modules/
 资料/
 # 内部 checklist
 发布前checklist.md
+
+# 短片制作（私有）：爆款要求 agent（借自 article-to-reel）、分镜/抽卡/发布稿
+# 含外部项目复制内容 + 渠道独占，不上传 GitHub
+shortfilm-private/
+# 短片生产素材：参考图、成片帧、分镜 md —— 私有制作物，不进仓库
+assets/images/
+assets/参考图片/
+assets/最后一单_DEAD_ON_TIME_最终定稿.md
+# v3 成片素材（1.1G：mov/wav/成片帧/版权存证）+ 出片问题截图 —— 版权敏感，绝不入库
+assets/v3/
+assets/问题登记/
+# 本地开发用 workflow 脚本，不进公开产品
+.claude/workflows/
