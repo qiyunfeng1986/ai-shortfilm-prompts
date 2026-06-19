@@ -139,9 +139,8 @@
 
 <footer>
   <div class="wrap">
-    <p><b>许可</b>：方法论 / 模板 / Skill 为 jnMetaCode 原创，<span class="pill mit">MIT</span>。
-       <code>prompts/</code> 内为 Mx-Shell 原始材料，<span class="pill rar">© Mx-Shell 保留所有权利</span>，仅作教育存档参考。详见
-       <a href="https://github.com/jnMetaCode/ai-shortfilm-prompts/blob/main/NOTICE" target="_blank">NOTICE</a>。</p>
+    <p><b>许可</b>：方法论 / 模板 / Skill 为 jnMetaCode 原创，<span class="pill mit">MIT</span> 自由使用。
+       <code>prompts/</code> 为基于 Mx-Shell《丧尸清道夫》方法整理的提示词。</p>
     <p>方法首发由 Mx-Shell 在《丧尸清道夫》中验证。本页内容随仓库 <code>main</code> 分支自动更新。</p>
   </div>
 </footer>
@@ -186,7 +185,7 @@ const ITEMS = [
   {cat:["method"], ico:"⚡", title:"Claude Code Skill", en:"shortfilm-prompt skill", lic:"mit",
    desc:"装进 Claude Code，一句话生成合规提示词。", path:"skills/shortfilm-prompt/SKILL.zh.md"},
 
-  // —— Mx-Shell 原始提示词（教育存档，保留所有权利）——
+  // —— Mx-Shell 原始提示词（源自《丧尸清道夫》系列，整理存档）——
   {cat:["archive"], ico:"🧟", title:"丧尸清道夫（原型作）", en:"Zombie Scavenger", lic:"rar",
    desc:"5 段式方法首次验证的原始作品提示词。", path:"prompts/zombie-scavenger.md"},
   {cat:["archive"], ico:"🦗", title:"假面骑士变身合集", en:"Kamen Rider", lic:"rar",
@@ -209,8 +208,8 @@ const SECTIONS = [
    desc:"jnMetaCode 原创的去 IP 通用骨架，复制粘贴即可改成自己的设定。"},
   {cat:"method", title:"方法论 / 案例 / Skill", pill:'<span class="pill mit">MIT</span>',
    desc:"想理解「为什么这么写」从这里开始。"},
-  {cat:"archive", title:"Mx-Shell 原始提示词 · 教育存档", pill:'<span class="pill rar">© Mx-Shell 保留所有权利</span>',
-   desc:"Mx-Shell 的原始材料，仅作教育参考存档，未以 MIT 重新授权。"},
+  {cat:"archive", title:"Mx-Shell 原始提示词", pill:'',
+   desc:"源自 Mx-Shell《丧尸清道夫》系列，整理存档便于查阅。"},
 ];
 
 function cardHTML(it){
@@ -252,7 +251,6 @@ function render(){
     block.innerHTML =
       `<div class="sec-title">${s?s.title:c} ${s?s.pill:''}</div>
        <div class="sec-desc">${s?s.desc:''}</div>
-       ${c==="archive"?'<div class="rar-note"><b>⚠ 版权说明</b>：以下为 Mx-Shell 原始提示词，© Mx-Shell 保留所有权利，仅作教育存档参考，<b>不以 MIT 重新授权</b>。请勿直接商用。</div>':''}
        <div class="grid">${list.map(cardHTML).join("")}</div>`;
     board.appendChild(block);
   });
