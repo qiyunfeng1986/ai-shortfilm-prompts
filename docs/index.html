@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 短片提示词库 · Cinematic AI Video Prompts</title>
+<meta name="description" content="电影感 AI 视频提示词方法论 + 模板库 + Claude Code Skill。基于 Mx-Shell《丧尸清道夫》5 段式结构，适用 Seedance 2.0 / 小云雀 / Sora / 可灵 / 即梦 / Veo。">
+<style>
+  :root{
+    --bg:#0b0d12; --panel:#13161d; --panel2:#1a1e27; --line:#262b36;
+    --txt:#e7e9ee; --dim:#9aa3b2; --accent:#e8b84b; --accent2:#5fa8ff;
+    --mit:#5fd08a; --rar:#e88b6b;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{background:var(--bg);color:var(--txt);
+    font-family:-apple-system,BlinkMacSystemFont,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif;
+    line-height:1.6;-webkit-font-smoothing:antialiased}
+  a{color:var(--accent2);text-decoration:none}
+  a:hover{text-decoration:underline}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 20px}
+
+  header.hero{padding:64px 0 40px;border-bottom:1px solid var(--line);
+    background:radial-gradient(900px 360px at 50% -120px,rgba(232,184,75,.10),transparent)}
+  .hero h1{font-size:clamp(28px,5vw,46px);margin:0 0 14px;letter-spacing:.5px}
+  .hero h1 .g{background:linear-gradient(90deg,var(--accent),#f0d68a);-webkit-background-clip:text;background-clip:text;color:transparent}
+  .hero p.lead{font-size:clamp(15px,2.2vw,19px);color:var(--dim);max-width:680px;margin:0 0 24px}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:8px}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 18px;border-radius:10px;
+    font-size:14px;font-weight:600;border:1px solid var(--line);background:var(--panel2);color:var(--txt)}
+  .btn:hover{text-decoration:none;border-color:var(--accent)}
+  .btn.primary{background:var(--accent);color:#1a1505;border-color:var(--accent)}
+  .models{margin-top:22px;color:var(--dim);font-size:13px}
+  .models b{color:var(--txt);font-weight:600}
+
+  .tabs{display:flex;flex-wrap:wrap;gap:8px;margin:34px 0 4px;position:sticky;top:0;
+    background:var(--bg);padding:14px 0;z-index:5;border-bottom:1px solid var(--line)}
+  .tab{padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--panel);
+    color:var(--dim);font-size:13px;cursor:pointer;user-select:none}
+  .tab.active{background:var(--accent);color:#1a1505;border-color:var(--accent);font-weight:600}
+  .search{margin-left:auto;flex:1;min-width:180px;max-width:280px}
+  .search input{width:100%;padding:8px 12px;border-radius:8px;border:1px solid var(--line);
+    background:var(--panel);color:var(--txt);font-size:13px}
+
+  .sec-title{margin:38px 0 6px;font-size:18px;display:flex;align-items:center;gap:10px}
+  .sec-desc{color:var(--dim);font-size:13px;margin:0 0 18px}
+  .pill{font-size:11px;padding:2px 9px;border-radius:999px;font-weight:600;letter-spacing:.3px}
+  .pill.mit{background:rgba(95,208,138,.14);color:var(--mit);border:1px solid rgba(95,208,138,.3)}
+  .pill.rar{background:rgba(232,139,107,.14);color:var(--rar);border:1px solid rgba(232,139,107,.3)}
+
+  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px;margin-bottom:10px}
+  .card{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:18px;cursor:pointer;
+    transition:transform .12s ease,border-color .12s ease;display:flex;flex-direction:column;gap:8px}
+  .card:hover{transform:translateY(-3px);border-color:var(--accent)}
+  .card .ico{font-size:22px}
+  .card h3{margin:0;font-size:16px}
+  .card .en{color:var(--dim);font-size:12px;margin:-4px 0 2px}
+  .card p{margin:0;color:var(--dim);font-size:13px;flex:1}
+  .card .feat{align-self:flex-start;font-size:11px;color:var(--accent);font-weight:600}
+
+  .rar-note{background:rgba(232,139,107,.07);border:1px solid rgba(232,139,107,.25);
+    border-radius:12px;padding:14px 16px;font-size:13px;color:var(--dim);margin:14px 0 20px}
+  .rar-note b{color:var(--rar)}
+
+  /* modal */
+  .modal{position:fixed;inset:0;background:rgba(5,6,9,.78);display:none;z-index:50;
+    backdrop-filter:blur(3px);padding:30px 16px;overflow-y:auto}
+  .modal.open{display:block}
+  .sheet{max-width:860px;margin:0 auto;background:var(--panel);border:1px solid var(--line);
+    border-radius:16px;overflow:hidden;animation:rise .18s ease}
+  @keyframes rise{from{transform:translateY(14px);opacity:0}to{transform:none;opacity:1}}
+  .sheet-bar{display:flex;align-items:center;gap:10px;padding:14px 18px;border-bottom:1px solid var(--line);
+    position:sticky;top:0;background:var(--panel);z-index:2}
+  .sheet-bar h2{font-size:16px;margin:0;flex:1}
+  .sheet-bar .x{cursor:pointer;color:var(--dim);font-size:22px;line-height:1;padding:0 4px}
+  .sbtn{padding:7px 13px;border-radius:8px;border:1px solid var(--line);background:var(--panel2);
+    color:var(--txt);font-size:13px;cursor:pointer;font-weight:600}
+  .sbtn:hover{border-color:var(--accent)}
+  .md{padding:22px 26px 40px;overflow-x:auto}
+  .md h1,.md h2,.md h3{line-height:1.3}
+  .md h1{font-size:24px;border-bottom:1px solid var(--line);padding-bottom:10px}
+  .md h2{font-size:19px;margin-top:28px}
+  .md h3{font-size:16px}
+  .md code{background:var(--panel2);padding:2px 6px;border-radius:5px;font-size:.9em}
+  .md pre{background:#0d0f14;border:1px solid var(--line);border-radius:10px;padding:14px;overflow-x:auto}
+  .md pre code{background:none;padding:0}
+  .md blockquote{border-left:3px solid var(--accent);margin:14px 0;padding:2px 16px;color:var(--dim)}
+  .md table{border-collapse:collapse;width:100%;margin:14px 0;font-size:14px}
+  .md th,.md td{border:1px solid var(--line);padding:7px 10px;text-align:left}
+  .md a{color:var(--accent2)}
+  .md img{max-width:100%}
+  .loading{padding:50px;text-align:center;color:var(--dim)}
+
+  footer{border-top:1px solid var(--line);margin-top:50px;padding:30px 0 50px;color:var(--dim);font-size:13px}
+  footer a{color:var(--dim);text-decoration:underline}
+  .hidden{display:none !important}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <div class="wrap">
+    <h1>电影感 <span class="g">AI 短片提示词库</span></h1>
+    <p class="lead">基于 Mx-Shell《丧尸清道夫》验证的 <b>5 段式结构</b>。方法论 + 可复制模板库 + Claude Code Skill，
+      一份提示词直接粘进视频模型就能跑。</p>
+    <div class="cta">
+      <a class="btn primary" href="https://github.com/jnMetaCode/ai-shortfilm-prompts" target="_blank">★ GitHub 仓库</a>
+      <a class="btn" href="https://github.com/jnMetaCode/ai-shortfilm-prompts/blob/main/skills/shortfilm-prompt/SKILL.md" target="_blank">⚡ 安装 Skill</a>
+      <a class="btn" href="https://github.com/jnMetaCode/ai-shortfilm-prompts/blob/main/methodology.zh.md" target="_blank">📖 方法论</a>
+    </div>
+    <div class="models">适配 · <b>Seedance 2.0</b> · <b>小云雀</b> · <b>Sora</b> · <b>可灵</b> · <b>即梦</b> · <b>Veo</b> · <b>海螺</b> · Wan · Runway · Pika</div>
+  </div>
+</header>
+
+<div class="wrap">
+  <div class="tabs">
+    <div class="tab active" data-cat="all">全部</div>
+    <div class="tab" data-cat="template">模板库</div>
+    <div class="tab" data-cat="emotion">情感叙事</div>
+    <div class="tab" data-cat="method">方法/案例</div>
+    <div class="tab" data-cat="archive">Mx-Shell 存档</div>
+    <div class="search"><input id="q" type="search" placeholder="搜索…（标题/简介）"></div>
+  </div>
+
+  <div id="board"></div>
+</div>
+
+<div class="modal" id="modal">
+  <div class="sheet">
+    <div class="sheet-bar">
+      <h2 id="m-title">…</h2>
+      <button class="sbtn" id="m-copy">复制原文</button>
+      <a class="sbtn" id="m-raw" target="_blank">GitHub ↗</a>
+      <span class="x" id="m-close">✕</span>
+    </div>
+    <div class="md" id="m-body"><div class="loading">加载中…</div></div>
+  </div>
+</div>
+
+<footer>
+  <div class="wrap">
+    <p><b>许可</b>：方法论 / 模板 / Skill 为 jnMetaCode 原创，<span class="pill mit">MIT</span>。
+       <code>prompts/</code> 内为 Mx-Shell 原始材料，<span class="pill rar">© Mx-Shell 保留所有权利</span>，仅作教育存档参考。详见
+       <a href="https://github.com/jnMetaCode/ai-shortfilm-prompts/blob/main/NOTICE" target="_blank">NOTICE</a>。</p>
+    <p>方法首发由 Mx-Shell 在《丧尸清道夫》中验证。本页内容随仓库 <code>main</code> 分支自动更新。</p>
+  </div>
+</footer>
+
+<script src="https://cdn.jsdelivr.net/npm/marked@12/marked.min.js"></script>
+<script>
+// 数据源：本地 http 预览（localhost）走相对路径，能看到未推送的最新内容；
+// 线上 GitHub Pages 走 jsDelivr（从仓库 main 分支拉，需先 push）。
+const LOCAL = ["localhost","127.0.0.1"].includes(location.hostname);
+const GH = LOCAL ? "../" : "https://cdn.jsdelivr.net/gh/jnMetaCode/ai-shortfilm-prompts@main/";
+const REPO = "https://github.com/jnMetaCode/ai-shortfilm-prompts/blob/main/";
+
+// 内容清单：MIT 原创 + 教育存档分开标注
+const ITEMS = [
+  // —— 情感叙事（同时归入模板库；这是流量主线，置顶 featured）——
+  {cat:["template","emotion"], ico:"🐕", title:"萌宠亲情 · 一生的陪伴", en:"Pet × Family, A Lifetime", lic:"mit", feat:"⭐ 情感叙事范例",
+   desc:"一只狗陪孩子长大到老去。时间靠季节+光、调色锁一档，结尾克制不煽情。", path:"templates/pet-lifetime-narrative.zh.md"},
+
+  // —— 模板库（MIT 原创）——
+  {cat:["template"], ico:"🦾", title:"15 秒变身骨架", en:"15s Transformation", lic:"mit",
+   desc:"去 IP 通用的单镜头变身模板，填空即用。", path:"templates/15s-transformation.zh.md"},
+  {cat:["template"], ico:"🎬", title:"多分镜叙事骨架", en:"Multi-Shot Narrative", lic:"mit",
+   desc:"把一个事件拆成 N 个 5–8 秒镜头再剪辑成片。", path:"templates/multi-shot-narrative.zh.md"},
+  {cat:["template"], ico:"🎥", title:"五大类型片运镜 SOP", en:"Genre Camera SOP", lic:"mit",
+   desc:"恐怖/动作/爱情/悬疑/史诗，决定镜头怎么动。", path:"templates/genre-camera-sop.zh.md"},
+  {cat:["template"], ico:"🎞️", title:"运镜技法库 · 50 式", en:"Camera-Move Library", lic:"mit",
+   desc:"五大技法模块 50 种运镜话术，按技法查。", path:"templates/camera-move-library.zh.md"},
+  {cat:["template"], ico:"🌫️", title:"氛围/画质预制块", en:"Atmosphere Prefabs", lic:"mit",
+   desc:"按类型复制粘贴的「氛围与画质」段落模板。", path:"templates/atmosphere-prefabs.zh.md"},
+  {cat:["template"], ico:"🚫", title:"反向提示词 · 防瑕疵块", en:"Negative Prompts", lic:"mit",
+   desc:"压住化手/塑料皮/抖帧/游戏感，按模型分流。", path:"templates/negative-prompts.zh.md"},
+
+  // —— 方法论 / 案例（MIT）——
+  {cat:["method"], ico:"📐", title:"方法论 · 5 段式结构", en:"Methodology", lic:"mit",
+   desc:"核心主题/人物/氛围/运镜/分镜——整套写法。", path:"methodology.zh.md"},
+  {cat:["method"], ico:"🧩", title:"拆解案例库", en:"Case Studies", lic:"mit",
+   desc:"真实作品逐段拆解，看 5 段式怎么落地。", path:"cases.zh.md"},
+  {cat:["method"], ico:"⚡", title:"Claude Code Skill", en:"shortfilm-prompt skill", lic:"mit",
+   desc:"装进 Claude Code，一句话生成合规提示词。", path:"skills/shortfilm-prompt/SKILL.zh.md"},
+
+  // —— Mx-Shell 原始提示词（教育存档，保留所有权利）——
+  {cat:["archive"], ico:"🧟", title:"丧尸清道夫（原型作）", en:"Zombie Scavenger", lic:"rar",
+   desc:"5 段式方法首次验证的原始作品提示词。", path:"prompts/zombie-scavenger.md"},
+  {cat:["archive"], ico:"🦗", title:"假面骑士变身合集", en:"Kamen Rider", lic:"rar",
+   desc:"蟑螂/火魔/雷龙/彩虹麋鹿/紫鹰等变身变体。", path:"prompts/kamen-rider-transformations.md"},
+  {cat:["archive"], ico:"💜", title:"卡莎变身", en:"Kai'Sa Transformation", lic:"rar",
+   desc:"角色变身段的提示词写法。", path:"prompts/kaisa-transformation.md"},
+  {cat:["archive"], ico:"🔫", title:"合金装备 · 充能打斗", en:"Metal Gear Charge/Combat", lic:"rar",
+   desc:"武器充能 + 打斗的经典两段式。", path:"prompts/metal-gear-charge-combat.md"},
+  {cat:["archive"], ico:"🤖", title:"环太平洋 / 高达机甲", en:"Pacific Rim / Gundam", lic:"rar",
+   desc:"大场面机甲史诗段提示词。", path:"prompts/pacific-rim-gundam.md"},
+  {cat:["archive"], ico:"🗡️", title:"赛博武侠", en:"Cyber Wuxia", lic:"rar",
+   desc:"港片武侠 + 赛博风格融合。", path:"prompts/cyber-wuxia.md"},
+];
+
+const board = document.getElementById('board');
+let curCat = "all", curQ = "";
+
+const SECTIONS = [
+  {cat:"template", title:"模板库", pill:'<span class="pill mit">MIT · 可自由使用</span>',
+   desc:"jnMetaCode 原创的去 IP 通用骨架，复制粘贴即可改成自己的设定。"},
+  {cat:"method", title:"方法论 / 案例 / Skill", pill:'<span class="pill mit">MIT</span>',
+   desc:"想理解「为什么这么写」从这里开始。"},
+  {cat:"archive", title:"Mx-Shell 原始提示词 · 教育存档", pill:'<span class="pill rar">© Mx-Shell 保留所有权利</span>',
+   desc:"Mx-Shell 的原始材料，仅作教育参考存档，未以 MIT 重新授权。"},
+];
+
+function cardHTML(it){
+  return `<div class="card" data-path="${it.path}" data-title="${it.title}">
+    <div class="ico">${it.ico}</div>
+    <h3>${it.title}</h3>
+    <div class="en">${it.en}</div>
+    <p>${it.desc}</p>
+    ${it.feat?`<div class="feat">${it.feat}</div>`:''}
+  </div>`;
+}
+
+function matches(it){
+  const inCat = curCat==="all" || it.cat.includes(curCat);
+  const q = curQ.trim().toLowerCase();
+  const inQ = !q || (it.title+it.en+it.desc).toLowerCase().includes(q);
+  return inCat && inQ;
+}
+
+function render(){
+  board.innerHTML = "";
+  // 情感叙事 / 搜索：扁平展示
+  if(curCat==="emotion" || (curCat==="all" && curQ)){
+    const list = ITEMS.filter(matches);
+    board.innerHTML = list.length
+      ? `<div class="grid">${list.map(cardHTML).join("")}</div>`
+      : `<p class="sec-desc">没有匹配项。</p>`;
+    bindCards(); return;
+  }
+  const cats = curCat==="all" ? SECTIONS.map(s=>s.cat)
+            : (curCat==="emotion"?["template"]:[curCat]);
+  let any=false;
+  cats.forEach(c=>{
+    const s = SECTIONS.find(x=>x.cat===c);
+    const list = ITEMS.filter(it=>it.cat.includes(c) && matches(it));
+    if(!list.length) return;
+    any=true;
+    const block = document.createElement('div');
+    block.innerHTML =
+      `<div class="sec-title">${s?s.title:c} ${s?s.pill:''}</div>
+       <div class="sec-desc">${s?s.desc:''}</div>
+       ${c==="archive"?'<div class="rar-note"><b>⚠ 版权说明</b>：以下为 Mx-Shell 原始提示词，© Mx-Shell 保留所有权利，仅作教育存档参考，<b>不以 MIT 重新授权</b>。请勿直接商用。</div>':''}
+       <div class="grid">${list.map(cardHTML).join("")}</div>`;
+    board.appendChild(block);
+  });
+  if(!any) board.innerHTML = `<p class="sec-desc">没有匹配项。</p>`;
+  bindCards();
+}
+
+function bindCards(){
+  document.querySelectorAll('.card').forEach(c=>{
+    c.onclick=()=>openDoc(c.dataset.path, c.dataset.title);
+  });
+}
+
+// modal
+const modal=document.getElementById('modal'), mBody=document.getElementById('m-body'),
+      mTitle=document.getElementById('m-title'), mRaw=document.getElementById('m-raw'),
+      mCopy=document.getElementById('m-copy');
+let curRaw="";
+
+async function openDoc(path,title){
+  mTitle.textContent=title;
+  mRaw.href=REPO+path;
+  mBody.innerHTML='<div class="loading">加载中…</div>';
+  modal.classList.add('open');
+  document.body.style.overflow='hidden';
+  try{
+    const r=await fetch(GH+path);
+    if(!r.ok) throw new Error(r.status);
+    curRaw=await r.text();
+    mBody.innerHTML=marked.parse(curRaw);
+  }catch(e){
+    mBody.innerHTML=`<div class="loading">加载失败（${e.message}）。<br><a href="${REPO+path}" target="_blank">去 GitHub 查看 ↗</a></div>`;
+    curRaw="";
+  }
+}
+function closeDoc(){modal.classList.remove('open');document.body.style.overflow='';}
+document.getElementById('m-close').onclick=closeDoc;
+modal.onclick=e=>{if(e.target===modal)closeDoc();};
+document.addEventListener('keydown',e=>{if(e.key==="Escape")closeDoc();});
+mCopy.onclick=async()=>{
+  if(!curRaw)return;
+  try{await navigator.clipboard.writeText(curRaw);mCopy.textContent="已复制 ✓";
+    setTimeout(()=>mCopy.textContent="复制原文",1500);}catch(e){mCopy.textContent="复制失败";}
+};
+
+// tabs + search
+document.querySelectorAll('.tab').forEach(t=>{
+  t.onclick=()=>{
+    document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+    t.classList.add('active'); curCat=t.dataset.cat; render();
+  };
+});
+document.getElementById('q').oninput=e=>{curQ=e.target.value;render();};
+
+render();
+</script>
+</body>
+</html>
