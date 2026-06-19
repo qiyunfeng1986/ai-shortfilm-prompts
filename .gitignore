@@ -47,3 +47,9 @@ assets/v3/
 assets/问题登记/
 # 本地开发用 workflow 脚本，不进公开产品
 .claude/workflows/
+# 密钥：Cloudflare/部署 token —— 绝不入库
+.cf.env
+.cloudflare.env
+.dev.vars
+.env
+.env.*
