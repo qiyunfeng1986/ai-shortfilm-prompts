@@ -2,7 +2,7 @@
 
 > 🌐 **Browse the prompt library online → [prompts.aiolaola.com](https://prompts.aiolaola.com)** — view any template/case and copy it with one click, no install.
 
-> 📖 **免费配套学习** → [从零学会 AI 编程](https://aiolaola.com/)：180 节免费实操课 + 《AI 编程实战三卷书》在线阅读 + 实战社区 · 永久免费
+> 📖 **免费配套学习** → [从零学会 AI 编程](https://aiolaola.com/?utm_source=github&utm_campaign=shortfilm)：180 节免费实操课 + 《AI 编程实战三卷书》在线阅读 + 实战社区 · 永久免费
 
 <!-- ═══ HERO DEMO SLOT — publish your rendered 15s clip in 2 steps:
      1. Drag your demo.mp4 into any GitHub issue/PR comment box; copy the
@@ -342,7 +342,7 @@ Made something with the method? It goes on the [showcase](./showcase.md).
   <img src="docs/assets/qr-douyin.jpg" width="168" alt="抖音 AI 不止语">
 </p>
 
-微信公众号「**AI 不止语**」 · 抖音 **@AI不止语**（AIBZY） · [X @jnMetaCode](https://x.com/jnMetaCode) · [aiOlaOla — 免费学 AI 编程](https://aiolaola.com/)
+微信公众号「**AI 不止语**」 · 抖音 **@AI不止语**（AIBZY） · [X @jnMetaCode](https://x.com/jnMetaCode) · [aiOlaOla — 免费学 AI 编程](https://aiolaola.com/?utm_source=github&utm_campaign=shortfilm)
 
 🌐 Live prompt library → **[prompts.aiolaola.com](https://prompts.aiolaola.com)**
 
