@@ -6,6 +6,24 @@
 
 ## 🔧 API 基础配置
 
+### 可用模型
+
+| 模型ID | 类型 | 说明 |
+|---|---|---|
+| `agnes-video-v2.0` | 视频生成 | 文生视频模型 |
+| `agnes-image-2.1-flash` | 图像生成 | 文生图模型 |
+| `agnes-image-2.0-flash` | 图像生成 | 文生图模型 |
+| `agnes-2.0-flash` | 文本生成 | 对话/文本模型 |
+| `agnes-1.5-flash` | 文本生成 | 对话/文本模型 |
+
+### 接口说明
+
+- **视频生成**：`POST /v1/video/generations`
+- **视频状态查询**：`GET /v1/videos/{task_id}`
+- **图像生成**：`POST /v1/images/generations`
+
+### 配置代码
+
 ```python
 import requests
 import json
@@ -18,6 +36,58 @@ HEADERS = {
     "Authorization": f"Bearer {API_KEY}",
     "Content-Type": "application/json"
 }
+
+# 提交视频生成任务
+def submit_video_task(prompt, seconds=5, model="agnes-video-v2.0"):
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "seconds": str(seconds)  # 注意：seconds 需要是字符串类型
+    }
+    response = requests.post(
+        f"{BASE_URL}/video/generations",
+        headers=HEADERS,
+        json=payload
+    )
+    result = response.json()
+    if "id" in result:
+        print(f"✅ 任务已提交: {result['id']}")
+        print(f"   时长: {result['seconds']}s | 尺寸: {result['size']}")
+        return result["id"]
+    else:
+        print(f"❌ 提交失败: {result}")
+        return None
+
+# 查询任务状态
+def check_video_status(task_id):
+    response = requests.get(
+        f"{BASE_URL}/videos/{task_id}",
+        headers=HEADERS
+    )
+    return response.json()
+
+# 等待视频生成完成
+def wait_for_video(task_id, check_interval=10, timeout=600):
+    print(f"⏳ 等待视频生成 (任务ID: {task_id})...")
+    elapsed = 0
+    while elapsed < timeout:
+        status = check_video_status(task_id)
+        current_status = status.get("status", "unknown")
+        progress = status.get("progress", 0)
+        
+        if current_status == "completed":
+            print(f"✅ 生成完成!")
+            return status
+        elif current_status == "failed":
+            print(f"❌ 生成失败: {status.get('error', '未知错误')}")
+            return status
+        
+        print(f"   状态: {current_status} | 进度: {progress}% | 已等: {elapsed}s")
+        time.sleep(check_interval)
+        elapsed += check_interval
+    
+    print(f"⏰ 超时: {timeout}s 内未完成")
+    return None
 ```
 
 ---
