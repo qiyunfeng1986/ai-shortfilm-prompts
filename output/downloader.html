@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>视频下载器</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0d0d0d; color: #fff; padding: 30px; }
+  .container { max-width: 400px; margin: 0 auto; text-align: center; }
+  h1 { font-size: 20px; margin-bottom: 20px; }
+  .btn { 
+    display: block; 
+    width: 100%; 
+    padding: 15px 20px; 
+    margin: 10px 0; 
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-size: 16px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+  }
+  .btn:hover { transform: scale(1.02); }
+  .btn.danger { background: linear-gradient(135deg, #ef4444, #dc2626); }
+  .tip { font-size: 12px; color: #888; margin-top: 20px; padding: 15px; background: rgba(255,255,255,0.05); border-radius: 8px; line-height: 1.6; }
+  .progress { display: none; margin-top: 15px; padding: 10px; background: rgba(255,255,255,0.05); border-radius: 8px; }
+  .progress.active { display: block; }
+  .progress-bar { height: 8px; background: #333; border-radius: 4px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, #4ade80, #22c55e); width: 0%; transition: width 0.3s; }
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>🎬 视频下载器</h1>
+  
+  <button class="btn" onclick="downloadFullVideo()">
+    📥 下载完整视频 (40秒 · 13MB)
+  </button>
+  
+  <button class="btn danger" onclick="downloadAllScenes()">
+    📦 下载所有分镜 (8个文件)
+  </button>
+  
+  <div class="progress" id="progress">
+    <div id="progress-text">正在准备下载...</div>
+    <div class="progress-bar">
+      <div class="progress-fill" id="progress-fill"></div>
+    </div>
+  </div>
+  
+  <div class="tip">
+    💡 <strong>如果下载没有自动开始：</strong><br>
+    1. 视频会在新标签页打开<br>
+    2. 在视频上右键点击<br>
+    3. 选择「另存为」保存到本地
+  </div>
+</div>
+
+<script>
+const videos = [
+  { name: '完整视频', file: 'wuxia_fight_full.mp4', size: '13MB' },
+  { name: '分镜01', file: 'scene_01_env.mp4', size: '1.3MB' },
+  { name: '分镜02', file: 'scene_02_faceoff.mp4', size: '1.2MB' },
+  { name: '分镜03', file: 'scene_03_hilt.mp4', size: '1.5MB' },
+  { name: '分镜04', file: 'scene_04_draw.mp4', size: '1.0MB' },
+  { name: '分镜05', file: 'scene_05_first_clash.mp4', size: '1.7MB' },
+  { name: '分镜06', file: 'scene_06_feet.mp4', size: '1.7MB' },
+  { name: '分镜07', file: 'scene_07_over_shoulder.mp4', size: '1.2MB' },
+  { name: '分镜08', file: 'scene_08_ending.mp4', size: '1.5MB' },
+];
+
+function showProgress(text, percent) {
+  const progress = document.getElementById('progress');
+  const textEl = document.getElementById('progress-text');
+  const fill = document.getElementById('progress-fill');
+  progress.classList.add('active');
+  textEl.textContent = text;
+  fill.style.width = percent + '%';
+}
+
+function hideProgress() {
+  document.getElementById('progress').classList.remove('active');
+}
+
+async function downloadFile(filename, displayName) {
+  showProgress(`正在准备 ${displayName}...`, 30);
+  
+  try {
+    const response = await fetch(filename);
+    const blob = await response.blob();
+    
+    showProgress(`正在下载 ${displayName}...`, 70);
+    
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+    
+    showProgress(`${displayName} 已下载！`, 100);
+    setTimeout(hideProgress, 2000);
+  } catch (error) {
+    showProgress(`下载失败，正在尝试另一种方式...`, 50);
+    window.open(filename, '_blank');
+    setTimeout(hideProgress, 2000);
+  }
+}
+
+function downloadFullVideo() {
+  downloadFile('wuxia_fight_full.mp4', '完整视频');
+}
+
+async function downloadAllScenes() {
+  showProgress('开始下载所有分镜...', 0);
+  
+  for (let i = 1; i < videos.length; i++) {
+    const video = videos[i];
+    showProgress(`下载 ${video.name} (${video.size})...`, Math.round((i / (videos.length - 1)) * 100));
+    
+    try {
+      const response = await fetch(video.file);
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = video.file;
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      window.URL.revokeObjectURL(url);
+    } catch (error) {
+      window.open(video.file, '_blank');
+    }
+    
+    await new Promise(r => setTimeout(r, 1000));
+  }
+  
+  showProgress('所有分镜下载完成！', 100);
+  setTimeout(hideProgress, 3000);
+}
+</script>
+</body>
+</html>
