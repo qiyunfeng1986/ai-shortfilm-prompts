@@ -150,15 +150,43 @@ function App() {
       for (const task of processingTasks) {
         try {
           const status = await checkVideoStatus(task.agnesTaskId);
-          console.log(`📊 任务 ${task.id} 状态:`, status);
+          console.log(`📊 任务 ${task.id} 原始返回:`, status);
           
           let newStatus = task.status;
           let newProgress = task.progress;
           let newStage = task.stage;
           let newVideoUrl = task.videoUrl;
           let newError = task.error;
+          let rawStatus = '';
           
-          if (status.status === 'completed' || status.state === 'completed' || status.status === 'success') {
+          if (status.status) rawStatus = status.status;
+          else if (status.state) rawStatus = status.state;
+          else if (status.data?.status) rawStatus = status.data.status;
+          
+          const isCompleted = 
+            status.status === 'completed' || 
+            status.status === 'success' || 
+            status.status === 'done' ||
+            status.state === 'completed' ||
+            status.state === 'success' ||
+            status.data?.status === 'completed' ||
+            status.data?.status === 'success' ||
+            !!status.video_url ||
+            !!status.output?.video_url ||
+            !!status.result_url ||
+            !!status.data?.video_url ||
+            !!status.url;
+          
+          const isFailed = 
+            status.status === 'failed' || 
+            status.status === 'error' ||
+            status.status === 'cancelled' ||
+            status.state === 'failed' ||
+            status.state === 'error' ||
+            status.data?.status === 'failed' ||
+            status.data?.status === 'error';
+          
+          if (isCompleted) {
             newStatus = 'completed';
             newProgress = 100;
             newStage = 'completed';
@@ -166,20 +194,33 @@ function App() {
               || status.output?.video_url 
               || status.result_url
               || status.data?.video_url
-              || status.url;
+              || status.url
+              || status.data?.url;
             hasUpdate = true;
-            console.log(`✅ 任务 ${task.id} 完成!`);
-          } else if (status.status === 'failed' || status.state === 'failed' || status.status === 'error') {
+            console.log(`✅ 任务 ${task.id} 完成! 视频地址:`, newVideoUrl);
+            showToast('🎬 视频生成完成！', 'success');
+          } else if (isFailed) {
             newStatus = 'failed';
-            newError = status.error?.message || status.error || status.error_msg || '生成失败';
+            newError = status.error?.message 
+              || status.error 
+              || status.error_msg 
+              || status.data?.error
+              || '生成失败';
             hasUpdate = true;
             console.log(`❌ 任务 ${task.id} 失败:`, newError);
           } else {
-            const apiProgress = status.progress || status.progress_percent || 0;
-            if (apiProgress && apiProgress > newProgress) {
-              newProgress = Math.min(apiProgress, 95);
-            } else if (newProgress < 90) {
-              newProgress = Math.min(newProgress + 2, 90);
+            const apiProgress = 
+              status.progress || 
+              status.progress_percent || 
+              status.data?.progress ||
+              0;
+            
+            if (apiProgress && typeof apiProgress === 'number' && apiProgress > 0) {
+              newProgress = Math.min(apiProgress, 99);
+            } else {
+              if (newProgress < 95) {
+                newProgress = Math.min(newProgress + 1, 95);
+              }
             }
             newStage = 'generating_video';
             hasUpdate = true;
@@ -191,7 +232,8 @@ function App() {
             progress: newProgress,
             stage: newStage,
             videoUrl: newVideoUrl,
-            error: newError
+            error: newError,
+            rawStatus: rawStatus
           });
         } catch (e) {
           console.error(`轮询任务 ${task.id} 出错:`, e.message);
@@ -207,7 +249,7 @@ function App() {
           return t;
         }));
       }
-    }, 5000);
+    }, 3000);
   };
 
   const callAgnesAPI = async (endpoint, options = {}) => {
