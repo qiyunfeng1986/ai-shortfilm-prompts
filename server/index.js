@@ -11,6 +11,8 @@ const PORT = process.env.PORT || 3001;
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+const CLIENT_DIST_DIR = path.join(__dirname, '..', 'client', 'dist');
+
 const AGNES_BASE_URL = 'https://apihub.agnes-ai.com/v1';
 const AGNES_API_KEY = process.env.AGNES_API_KEY || 'sk-kQmnO4IsMZ8c8dcBCQ5oJbElDYqy05rUPM9TUAp48QpRt3Bw';
 
@@ -781,8 +783,21 @@ app.delete('/api/scripts/:id', (req, res) => {
   res.json({ success: true });
 });
 
+if (fs.existsSync(CLIENT_DIST_DIR)) {
+  console.log(`📦 Serving frontend from: ${CLIENT_DIST_DIR}`);
+  app.use(express.static(CLIENT_DIST_DIR));
+
+  app.get(/^\/(?!api\/).*/, (req, res, next) => {
+    if (req.method !== 'GET') return next();
+    res.sendFile(path.join(CLIENT_DIST_DIR, 'index.html'));
+  });
+}
+
 app.listen(PORT, () => {
   console.log(`🚀 Agnes AI Video Workbench Server running on port ${PORT}`);
   console.log(`📁 Uploads directory: ${UPLOAD_DIR}`);
   console.log(`🎬 Total tasks loaded: ${tasks.size}`);
+  if (fs.existsSync(CLIENT_DIST_DIR)) {
+    console.log(`🌐 Web UI: http://localhost:${PORT}`);
+  }
 });
