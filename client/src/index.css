@@ -1,0 +1,172 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
+
+:root {
+  font-family: 'Inter', system-ui, sans-serif;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 0;
+  background: #0a0612;
+  color: #e5e7eb;
+  min-height: 100vh;
+}
+
+#root {
+  width: 100%;
+  min-height: 100vh;
+}
+
+/* 自定义滚动条 */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(26, 16, 51, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #a855f7, #6366f1);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #c084fc, #818cf8);
+}
+
+/* 玻璃拟态 */
+.glass {
+  background: rgba(26, 16, 51, 0.6);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid rgba(168, 85, 247, 0.15);
+}
+
+.glass-light {
+  background: rgba(37, 21, 69, 0.4);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(168, 85, 247, 0.1);
+}
+
+/* 渐变文字 */
+.gradient-text {
+  background: linear-gradient(135deg, #00f5ff 0%, #a855f7 50%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.gradient-text-purple {
+  background: linear-gradient(135deg, #a855f7 0%, #ec4899 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* 发光效果 */
+.glow-cyan {
+  box-shadow: 0 0 20px rgba(0, 245, 255, 0.3), 0 0 40px rgba(0, 245, 255, 0.1);
+}
+
+.glow-purple {
+  box-shadow: 0 0 20px rgba(168, 85, 247, 0.3), 0 0 40px rgba(168, 85, 247, 0.1);
+}
+
+.glow-text-cyan {
+  text-shadow: 0 0 20px rgba(0, 245, 255, 0.5);
+}
+
+.glow-text-purple {
+  text-shadow: 0 0 20px rgba(168, 85, 247, 0.5);
+}
+
+/* 网格背景 */
+.grid-bg {
+  background-image: 
+    linear-gradient(rgba(168, 85, 247, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(168, 85, 247, 0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* 进度条动画 */
+.progress-bar {
+  background: linear-gradient(90deg, 
+    #a855f7 0%, 
+    #00f5ff 25%, 
+    #a855f7 50%, 
+    #00f5ff 75%, 
+    #a855f7 100%);
+  background-size: 200% 100%;
+  animation: progress-shimmer 2s linear infinite;
+}
+
+@keyframes progress-shimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* 视频卡片悬浮效果 */
+.video-card {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.video-card:hover {
+  transform: translateY(-4px) scale(1.02);
+}
+
+/* 按钮悬停发光 */
+.btn-glow {
+  position: relative;
+  overflow: hidden;
+  transition: all 0.3s ease;
+}
+
+.btn-glow::before {
+  content: '';
+  position: absolute;
+  inset: -2px;
+  background: linear-gradient(45deg, #00f5ff, #a855f7, #ec4899, #00f5ff);
+  background-size: 400% 400%;
+  border-radius: inherit;
+  z-index: -1;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  animation: gradient-rotate 3s ease infinite;
+}
+
+.btn-glow:hover::before {
+  opacity: 1;
+}
+
+@keyframes gradient-rotate {
+  0%, 100% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+}
+
+/* 入场动画 */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.6s ease-out forwards;
+}
