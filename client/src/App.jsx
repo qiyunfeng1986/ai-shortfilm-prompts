@@ -93,6 +93,11 @@ function App() {
   const fileInputRef = useRef(null);
   const videoRef = useRef(null);
   const pollingRef = useRef(null);
+  const tasksRef = useRef([]);
+
+  useEffect(() => {
+    tasksRef.current = tasks;
+  }, [tasks]);
 
   useEffect(() => {
     localStorage.setItem('agnes_api_key', apiKey);
@@ -111,12 +116,11 @@ function App() {
     if (hasProcessing && !pollingRef.current) {
       startPolling();
     }
-    return () => {
-      if (pollingRef.current) {
-        clearInterval(pollingRef.current);
-        pollingRef.current = null;
-      }
-    };
+    const hasActive = tasks.some(t => t.status === 'pending' || t.status === 'processing');
+    if (!hasActive && pollingRef.current) {
+      clearInterval(pollingRef.current);
+      pollingRef.current = null;
+    }
   }, [tasks]);
 
   const showToast = (message, type = 'info') => {
@@ -126,43 +130,84 @@ function App() {
 
   const startPolling = () => {
     if (pollingRef.current) return;
+    console.log('📡 开始轮询任务状态...');
     pollingRef.current = setInterval(async () => {
-      let updated = false;
-      const newTasks = [...tasks];
+      const currentTasks = tasksRef.current;
+      const processingTasks = currentTasks.filter(t => 
+        (t.status === 'pending' || t.status === 'processing') && t.agnesTaskId
+      );
       
-      for (let i = 0; i < newTasks.length; i++) {
-        const task = newTasks[i];
-        if (task.status !== 'pending' && task.status !== 'processing') continue;
-        if (!task.agnesTaskId) continue;
-        
+      if (processingTasks.length === 0) {
+        clearInterval(pollingRef.current);
+        pollingRef.current = null;
+        console.log('📡 所有任务完成，停止轮询');
+        return;
+      }
+
+      let hasUpdate = false;
+      const updates = [];
+
+      for (const task of processingTasks) {
         try {
           const status = await checkVideoStatus(task.agnesTaskId);
-          task.progress = status.progress || task.progress;
-          task.stage = task.status === 'pending' ? 'queued' : 'generating_video';
+          console.log(`📊 任务 ${task.id} 状态:`, status);
           
-          if (status.status === 'completed') {
-            task.status = 'completed';
-            task.progress = 100;
-            task.stage = 'completed';
-            task.videoUrl = status.video_url || status.output?.video_url || status.result_url;
-            task.completedAt = new Date().toISOString();
-            updated = true;
-          } else if (status.status === 'failed') {
-            task.status = 'failed';
-            task.error = status.error || '生成失败';
-            updated = true;
+          let newStatus = task.status;
+          let newProgress = task.progress;
+          let newStage = task.stage;
+          let newVideoUrl = task.videoUrl;
+          let newError = task.error;
+          
+          if (status.status === 'completed' || status.state === 'completed' || status.status === 'success') {
+            newStatus = 'completed';
+            newProgress = 100;
+            newStage = 'completed';
+            newVideoUrl = status.video_url 
+              || status.output?.video_url 
+              || status.result_url
+              || status.data?.video_url
+              || status.url;
+            hasUpdate = true;
+            console.log(`✅ 任务 ${task.id} 完成!`);
+          } else if (status.status === 'failed' || status.state === 'failed' || status.status === 'error') {
+            newStatus = 'failed';
+            newError = status.error?.message || status.error || status.error_msg || '生成失败';
+            hasUpdate = true;
+            console.log(`❌ 任务 ${task.id} 失败:`, newError);
           } else {
-            updated = true;
+            const apiProgress = status.progress || status.progress_percent || 0;
+            if (apiProgress && apiProgress > newProgress) {
+              newProgress = Math.min(apiProgress, 95);
+            } else if (newProgress < 90) {
+              newProgress = Math.min(newProgress + 2, 90);
+            }
+            newStage = 'generating_video';
+            hasUpdate = true;
           }
+          
+          updates.push({
+            id: task.id,
+            status: newStatus,
+            progress: newProgress,
+            stage: newStage,
+            videoUrl: newVideoUrl,
+            error: newError
+          });
         } catch (e) {
-          console.error('Polling error:', e);
+          console.error(`轮询任务 ${task.id} 出错:`, e.message);
         }
       }
-      
-      if (updated) {
-        setTasks([...newTasks]);
+
+      if (hasUpdate && updates.length > 0) {
+        setTasks(prev => prev.map(t => {
+          const update = updates.find(u => u.id === t.id);
+          if (update) {
+            return { ...t, ...update };
+          }
+          return t;
+        }));
       }
-    }, 10000);
+    }, 5000);
   };
 
   const callAgnesAPI = async (endpoint, options = {}) => {
