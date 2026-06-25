@@ -144,75 +144,139 @@ function formatFileSize(bytes) {
   return (bytes / (1024 * 1024)).toFixed(1) + ' MB';
 }
 
+async function requestWithRetry(config, maxRetries = 3, retryDelay = 5000) {
+  let lastError;
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await axios(config);
+      return response;
+    } catch (error) {
+      lastError = error;
+      const status = error.response?.status;
+      if (status === 401 || status === 403 || status === 400 || status === 422) {
+        throw error;
+      }
+      if (i < maxRetries - 1) {
+        console.log(`  ⚠️  请求失败 (${status || error.code})，第 ${i + 1} 次重试...`);
+        await new Promise(r => setTimeout(r, retryDelay * (i + 1)));
+      }
+    }
+  }
+  throw lastError;
+}
+
 async function downloadFile(url, destPath) {
-  const response = await axios({
-    method: 'GET',
-    url: url,
-    responseType: 'stream'
-  });
+  const maxRetries = 3;
+  let lastError;
   
-  const writer = fs.createWriteStream(destPath);
-  response.data.pipe(writer);
-  
-  return new Promise((resolve, reject) => {
-    writer.on('finish', resolve);
-    writer.on('error', reject);
-  });
+  for (let i = 0; i < maxRetries; i++) {
+    try {
+      const response = await axios({
+        method: 'GET',
+        url: url,
+        responseType: 'stream'
+      });
+      
+      const writer = fs.createWriteStream(destPath);
+      response.data.pipe(writer);
+      
+      return new Promise((resolve, reject) => {
+        writer.on('finish', resolve);
+        writer.on('error', reject);
+      });
+    } catch (error) {
+      lastError = error;
+      if (i < maxRetries - 1) {
+        console.log(`  ⚠️  下载失败，第 ${i + 1} 次重试...`);
+        await new Promise(r => setTimeout(r, 3000 * (i + 1)));
+      }
+    }
+  }
+  throw lastError;
 }
 
 async function generateImage(prompt, size = '1024x576') {
-  const response = await axios.post(
-    `${AGNES_BASE_URL}/images/generations`,
-    {
-      model: 'agnes-image-2.1-flash',
-      prompt: prompt,
-      size: size
-    },
-    {
+  try {
+    const response = await requestWithRetry({
+      method: 'POST',
+      url: `${AGNES_BASE_URL}/images/generations`,
+      data: {
+        model: 'agnes-image-2.1-flash',
+        prompt: prompt,
+        size: size
+      },
       headers: {
         'Authorization': `Bearer ${AGNES_API_KEY}`,
         'Content-Type': 'application/json'
       }
+    }, 3);
+    
+    if (response.data.data && response.data.data.length > 0) {
+      return response.data.data[0].url;
     }
-  );
-  
-  if (response.data.data && response.data.data.length > 0) {
-    return response.data.data[0].url;
+    throw new Error('Image generation failed: no data returned');
+  } catch (error) {
+    const status = error.response?.status;
+    const msg = error.response?.data?.error?.message || error.message;
+    if (status === 401 || status === 403) {
+      throw new Error('API Key 无效或已过期，请检查配置');
+    } else if (status === 503) {
+      throw new Error('Agnes AI 服务暂时不可用（503），请稍后再试');
+    } else if (status === 429) {
+      throw new Error('请求过于频繁，请稍候再试');
+    }
+    throw new Error(`图片生成失败: ${msg}`);
   }
-  throw new Error('Image generation failed');
 }
 
 async function submitVideoGeneration(prompt, imageUrl, seconds = 5) {
-  const response = await axios.post(
-    `${AGNES_BASE_URL}/video/generations`,
-    {
-      model: 'agnes-video-v2.0',
-      prompt: prompt,
-      seconds: String(seconds),
-      input_image: imageUrl
-    },
-    {
+  try {
+    const response = await requestWithRetry({
+      method: 'POST',
+      url: `${AGNES_BASE_URL}/video/generations`,
+      data: {
+        model: 'agnes-video-v2.0',
+        prompt: prompt,
+        seconds: String(seconds),
+        input_image: imageUrl
+      },
       headers: {
         'Authorization': `Bearer ${AGNES_API_KEY}`,
         'Content-Type': 'application/json'
       }
+    }, 3);
+    
+    return response.data.id;
+  } catch (error) {
+    const status = error.response?.status;
+    const msg = error.response?.data?.error?.message || error.message;
+    if (status === 401 || status === 403) {
+      throw new Error('API Key 无效或已过期，请检查配置');
+    } else if (status === 503) {
+      throw new Error('Agnes AI 服务暂时不可用（503），请稍后再试');
+    } else if (status === 429) {
+      throw new Error('请求过于频繁，请稍候再试');
+    } else if (status === 400) {
+      throw new Error(`参数错误: ${msg}`);
     }
-  );
-  
-  return response.data.id;
+    throw new Error(`视频生成提交失败: ${msg}`);
+  }
 }
 
 async function checkVideoStatus(taskId) {
-  const response = await axios.get(
-    `${AGNES_BASE_URL}/videos/${taskId}`,
-    {
+  try {
+    const response = await requestWithRetry({
+      method: 'GET',
+      url: `${AGNES_BASE_URL}/videos/${taskId}`,
       headers: {
         'Authorization': `Bearer ${AGNES_API_KEY}`
       }
-    }
-  );
-  
-  return response.data;
+    }, 2);
+    
+    return response.data;
+  } catch (error) {
+    throw error;
+  }
 }
 
 async function processTask(taskId) {
