@@ -218,8 +218,8 @@ function App() {
             if (apiProgress && typeof apiProgress === 'number' && apiProgress > 0) {
               newProgress = Math.min(apiProgress, 99);
             } else {
-              if (newProgress < 95) {
-                newProgress = Math.min(newProgress + 1, 95);
+              if (newProgress < 99) {
+                newProgress = Math.min(newProgress + 0.5, 99);
               }
             }
             newStage = 'generating_video';
@@ -796,7 +796,20 @@ function App() {
                 <div className="p-3">
                   <div className="flex items-center justify-between mb-3">
                     <p className="text-[11px] text-white/40 px-1">任务记录</p>
-                    <span className="text-[10px] text-white/30">{tasks.length} 个</span>
+                    <div className="flex items-center gap-1">
+                      <span className="text-[10px] text-white/30">{tasks.length} 个</span>
+                      <button
+                        onClick={() => {
+                          if (processingTasks.length > 0) {
+                            showToast('正在刷新状态...', 'info');
+                          }
+                        }}
+                        className="p-1 rounded hover:bg-white/10 text-white/40 hover:text-cyan-400 transition-colors"
+                        title="刷新状态"
+                      >
+                        <RefreshCw className="w-3 h-3" />
+                      </button>
+                    </div>
                   </div>
                   
                   {tasks.length === 0 ? (
@@ -830,10 +843,35 @@ function App() {
                               )}
                             </div>
                             <div className="flex-1 min-w-0">
-                              <p className="text-[11px] font-medium text-white/80 truncate">{task.styleName}</p>
+                              <div className="flex items-center justify-between">
+                                <p className="text-[11px] font-medium text-white/80 truncate">{task.styleName}</p>
+                                {(task.status === 'pending' || task.status === 'processing') && (
+                                  <button
+                                    onClick={async (e) => {
+                                      e.stopPropagation();
+                                      try {
+                                        const status = await checkVideoStatus(task.agnesTaskId);
+                                        console.log(`🔍 手动刷新任务 ${task.id}:`, status);
+                                        showToast('已刷新，查看控制台', 'info');
+                                      } catch (err) {
+                                        showToast('刷新失败: ' + err.message, 'error');
+                                      }
+                                    }}
+                                    className="p-0.5 rounded hover:bg-white/20 text-white/40 hover:text-cyan-400 transition-colors flex-shrink-0"
+                                    title="手动刷新状态"
+                                  >
+                                    <RefreshCw className="w-3 h-3" />
+                                  </button>
+                                )}
+                              </div>
                               <p className="text-[10px] text-white/40 mt-0.5">
                                 {getStatusLabel(task.status, task.stage)} · {task.duration}s
                               </p>
+                              {task.rawStatus && (task.status === 'pending' || task.status === 'processing') && (
+                                <p className="text-[9px] text-cyan-400/60 mt-0.5 font-mono">
+                                  API状态: {task.rawStatus}
+                                </p>
+                              )}
                               {(task.status === 'pending' || task.status === 'processing') && (
                                 <div className="mt-1 h-1 rounded-full bg-white/10 overflow-hidden">
                                   <div
