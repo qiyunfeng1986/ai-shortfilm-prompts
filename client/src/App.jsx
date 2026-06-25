@@ -11,6 +11,25 @@ import {
 import './index.css';
 
 const AGNES_BASE_URL = 'https://apihub.agnes-ai.com/v1';
+const AGNES_API_URL = 'https://apihub.agnes-ai.com/agnesapi';
+
+const VIDEO_MODEL = 'agnes-video-v2.0';
+const IMAGE_MODEL = 'agnes-image-2.1-flash';
+
+const FRAME_RATE = 24;
+
+const DURATIONS = [
+  { value: 3, label: '3秒', frames: 81 },
+  { value: 5, label: '5秒', frames: 121 },
+  { value: 10, label: '10秒', frames: 241 },
+  { value: 18, label: '18秒', frames: 441 }
+];
+
+const RESOLUTIONS = [
+  { value: '720p', label: '720p (1280×768)', width: 1280, height: 768 },
+  { value: '480p', label: '480p (854×480)', width: 854, height: 480 },
+  { value: '1080p', label: '1080p (1920×1080)', width: 1920, height: 1080 }
+];
 
 const STYLES = [
   { id: 'wuxia', name: '武侠意境', desc: '古典武侠雨夜庭院', gradient: 'from-amber-500 to-red-600', icon: '⚔️',
@@ -39,16 +58,11 @@ const STYLES = [
     videoPrompt: 'hair and clothing gently blowing in wind, clouds drifting across sunset sky, lens flare shifting subtly, cherry blossom petals floating by, slow subtle camera push-in, anime style, smooth animation, 24fps' }
 ];
 
-const DURATIONS = [
-  { value: 3, label: '3秒' },
-  { value: 5, label: '5秒' },
-  { value: 8, label: '8秒' },
-  { value: 10, label: '10秒' }
-];
-
 const MODES = [
   { id: 'text-to-video', label: '文生视频', icon: Type, desc: '用文字描述直接生成视频' },
   { id: 'image-to-video', label: '图生视频', icon: Image, desc: '上传图片生成动态视频' },
+  { id: 'multi-image', label: '多图视频', icon: Layers, desc: '多张图片合成视频' },
+  { id: 'keyframes', label: '关键帧', icon: Scissors, desc: '关键帧之间生成过渡' },
   { id: 'style-preset', label: '风格预设', icon: Sparkles, desc: '一键生成电影级大片' }
 ];
 
@@ -77,9 +91,13 @@ function App() {
   });
   const [selectedStyle, setSelectedStyle] = useState(null);
   const [selectedAsset, setSelectedAsset] = useState(null);
+  const [selectedKeyframes, setSelectedKeyframes] = useState([]);
   const [textPrompt, setTextPrompt] = useState('');
   const [motionPrompt, setMotionPrompt] = useState('');
+  const [negativePrompt, setNegativePrompt] = useState('');
   const [duration, setDuration] = useState(5);
+  const [resolution, setResolution] = useState('720p');
+  const [seed, setSeed] = useState('');
   const [isGenerating, setIsGenerating] = useState(false);
   const [isDragging, setIsDragging] = useState(false);
   const [previewVideo, setPreviewVideo] = useState(null);
@@ -134,7 +152,7 @@ function App() {
     pollingRef.current = setInterval(async () => {
       const currentTasks = tasksRef.current;
       const processingTasks = currentTasks.filter(t => 
-        (t.status === 'pending' || t.status === 'processing') && t.agnesTaskId
+        (t.status === 'pending' || t.status === 'processing') && (t.agnesTaskId || t.agnesVideoId)
       );
       
       if (processingTasks.length === 0) {
@@ -149,7 +167,7 @@ function App() {
 
       for (const task of processingTasks) {
         try {
-          const status = await checkVideoStatus(task.agnesTaskId);
+          const status = await checkVideoStatus(task.agnesVideoId, task.agnesTaskId);
           console.log(`📊 任务 ${task.id} 原始返回:`, status);
           
           let newStatus = task.status;
@@ -159,70 +177,54 @@ function App() {
           let newError = task.error;
           let rawStatus = '';
           
-          if (status.status) rawStatus = status.status;
-          else if (status.state) rawStatus = status.state;
-          else if (status.data?.status) rawStatus = status.data.status;
+          rawStatus = status.status || status.state || '';
           
           const isCompleted = 
-            status.status === 'completed' || 
-            status.status === 'success' || 
-            status.status === 'done' ||
-            status.state === 'completed' ||
-            status.state === 'success' ||
-            status.data?.status === 'completed' ||
-            status.data?.status === 'success' ||
+            status.status === 'completed' ||
+            !!status.remixed_from_video_id ||
             !!status.video_url ||
-            !!status.output?.video_url ||
-            !!status.result_url ||
-            !!status.data?.video_url ||
             !!status.url;
           
           const isFailed = 
-            status.status === 'failed' || 
+            status.status === 'failed' ||
             status.status === 'error' ||
-            status.status === 'cancelled' ||
-            status.state === 'failed' ||
-            status.state === 'error' ||
-            status.data?.status === 'failed' ||
-            status.data?.status === 'error';
+            (status.error && status.error !== null);
           
           if (isCompleted) {
             newStatus = 'completed';
             newProgress = 100;
             newStage = 'completed';
-            newVideoUrl = status.video_url 
-              || status.output?.video_url 
-              || status.result_url
-              || status.data?.video_url
-              || status.url
-              || status.data?.url;
+            newVideoUrl = status.remixed_from_video_id 
+              || status.video_url 
+              || status.url;
             hasUpdate = true;
             console.log(`✅ 任务 ${task.id} 完成! 视频地址:`, newVideoUrl);
             showToast('🎬 视频生成完成！', 'success');
           } else if (isFailed) {
             newStatus = 'failed';
-            newError = status.error?.message 
-              || status.error 
+            newError = (status.error && typeof status.error === 'object' && status.error.message) 
+              || (typeof status.error === 'string' ? status.error : null)
               || status.error_msg 
-              || status.data?.error
               || '生成失败';
             hasUpdate = true;
             console.log(`❌ 任务 ${task.id} 失败:`, newError);
           } else {
-            const apiProgress = 
-              status.progress || 
-              status.progress_percent || 
-              status.data?.progress ||
-              0;
+            const apiProgress = status.progress || 0;
             
             if (apiProgress && typeof apiProgress === 'number' && apiProgress > 0) {
               newProgress = Math.min(apiProgress, 99);
             } else {
               if (newProgress < 99) {
-                newProgress = Math.min(newProgress + 0.5, 99);
+                newProgress = Math.min(newProgress + 0.3, 99);
               }
             }
-            newStage = 'generating_video';
+            if (status.status === 'queued') {
+              newStage = 'queued';
+            } else if (status.status === 'in_progress') {
+              newStage = 'generating_video';
+            } else {
+              newStage = 'generating_video';
+            }
             hasUpdate = true;
           }
           
@@ -269,17 +271,38 @@ function App() {
     if (!response.ok) {
       const errorText = await response.text();
       let errorMsg = `请求失败 (${response.status})`;
+      let errorDetail = '';
       try {
         const errorData = JSON.parse(errorText);
         errorMsg = errorData.error?.message || errorData.error || errorMsg;
+        errorDetail = errorData.error?.details || '';
       } catch (e) {}
       
-      if (response.status === 401 || response.status === 403) {
+      const status = response.status;
+      if (status === 401) {
         throw new Error('API Key 无效或已过期，请检查设置');
-      } else if (response.status === 503) {
+      } else if (status === 402) {
+        throw new Error('账户余额或配额不足，请充值后再试');
+      } else if (status === 403) {
+        throw new Error('无权访问该模型，请检查账户权限');
+      } else if (status === 404) {
+        throw new Error('接口地址或模型名称不正确（404）');
+      } else if (status === 400) {
+        throw new Error('请求参数无效: ' + (errorDetail || errorMsg));
+      } else if (status === 422) {
+        throw new Error('参数不符合要求: ' + (errorDetail || errorMsg));
+      } else if (status === 429) {
+        throw new Error('请求过于频繁，请稍候再试（429）');
+      } else if (status === 503) {
         throw new Error('Agnes AI 服务暂时不可用（503），请稍后再试');
-      } else if (response.status === 429) {
-        throw new Error('请求过于频繁，请稍候再试');
+      } else if (status === 502) {
+        throw new Error('网关错误（502），请检查网络后重试');
+      } else if (status === 504) {
+        throw new Error('网关超时（504），请稍后再试');
+      } else if (status === 500) {
+        throw new Error('服务器内部错误（500），请稍后再试');
+      } else if (status === 408) {
+        throw new Error('请求超时（408），请检查网络后重试');
       }
       throw new Error(errorMsg);
     }
@@ -287,13 +310,16 @@ function App() {
     return response.json();
   };
 
-  const generateImage = async (prompt, size = '1024x576') => {
+  const generateImage = async (prompt, size = '1024x768') => {
     const data = await callAgnesAPI('/images/generations', {
       method: 'POST',
       body: JSON.stringify({
-        model: 'agnes-image-2.1-flash',
+        model: IMAGE_MODEL,
         prompt: prompt,
-        size: size
+        size: size,
+        extra_body: {
+          response_format: 'url'
+        }
       })
     });
     
@@ -303,22 +329,70 @@ function App() {
     throw new Error('图片生成失败：无返回数据');
   };
 
-  const submitVideoGeneration = async (prompt, imageUrl, seconds = 5) => {
-    const data = await callAgnesAPI('/video/generations', {
+  const submitVideoGeneration = async ({ prompt, imageUrl, imageUrls, mode, seconds, width, height, negativePrompt, seedNum }) => {
+    const durConfig = DURATIONS.find(d => d.value === seconds) || DURATIONS[1];
+    const resConfig = RESOLUTIONS.find(r => r.value === resolution) || RESOLUTIONS[0];
+    
+    const body = {
+      model: VIDEO_MODEL,
+      prompt: prompt,
+      num_frames: durConfig.frames,
+      frame_rate: FRAME_RATE,
+      width: width || resConfig.width,
+      height: height || resConfig.height
+    };
+    
+    if (imageUrl && mode === 'image-to-video') {
+      body.image = imageUrl;
+    }
+    
+    if (imageUrls && imageUrls.length > 0 && (mode === 'multi-image' || mode === 'keyframes')) {
+      if (!body.extra_body) body.extra_body = {};
+      body.extra_body.image = imageUrls;
+      if (mode === 'keyframes') {
+        body.extra_body.mode = 'keyframes';
+      }
+    }
+    
+    if (negativePrompt) {
+      body.negative_prompt = negativePrompt;
+    }
+    
+    if (seedNum) {
+      body.seed = seedNum;
+    }
+    
+    const data = await callAgnesAPI('/videos', {
       method: 'POST',
-      body: JSON.stringify({
-        model: 'agnes-video-v2.0',
-        prompt: prompt,
-        seconds: String(seconds),
-        input_image: imageUrl
-      })
+      body: JSON.stringify(body)
     });
     
-    return data.id;
+    return {
+      taskId: data.task_id || data.id,
+      videoId: data.video_id
+    };
   };
 
-  const checkVideoStatus = async (taskId) => {
-    return await callAgnesAPI(`/videos/${taskId}`);
+  const checkVideoStatus = async (videoId, taskId) => {
+    if (videoId) {
+      try {
+        const response = await fetch(`${AGNES_API_URL}?video_id=${encodeURIComponent(videoId)}&model_name=${VIDEO_MODEL}`, {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          }
+        });
+        if (response.ok) {
+          return await response.json();
+        }
+      } catch (e) {
+        console.warn('video_id 查询失败，尝试 task_id:', e.message);
+      }
+    }
+    if (taskId) {
+      return await callAgnesAPI(`/videos/${taskId}`);
+    }
+    throw new Error('没有有效的任务ID');
   };
 
   const handleDragOver = (e) => {
@@ -373,6 +447,21 @@ function App() {
   const deleteAsset = (id) => {
     setAssets(prev => prev.filter(a => a.id !== id));
     if (selectedAsset?.id === id) setSelectedAsset(null);
+    setSelectedKeyframes(prev => prev.filter(k => k.id !== id));
+  };
+
+  const toggleKeyframe = (asset) => {
+    setSelectedKeyframes(prev => {
+      const exists = prev.find(k => k.id === asset.id);
+      if (exists) {
+        return prev.filter(k => k.id !== asset.id);
+      }
+      if (prev.length >= 6) {
+        showToast('最多选择6张关键帧', 'error');
+        return prev;
+      }
+      return [...prev, asset];
+    });
   };
 
   const formatFileSize = (bytes) => {
@@ -393,10 +482,15 @@ function App() {
 
     try {
       const taskId = 'task_' + Math.random().toString(36).substring(2, 10);
-      let imageUrl = '';
       let videoPrompt = '';
       let styleName = '';
       let mode = activeMode;
+      let imageUrl = null;
+      let imageUrls = [];
+      let firstImageUrl = null;
+
+      const resConfig = RESOLUTIONS.find(r => r.value === resolution) || RESOLUTIONS[0];
+      const sizeStr = `${resConfig.width}x${resConfig.height}`;
 
       if (activeMode === 'text-to-video') {
         if (!textPrompt.trim()) {
@@ -405,41 +499,7 @@ function App() {
           return;
         }
         styleName = '文生视频';
-        videoPrompt = textPrompt + ', cinematic, photorealistic, 24fps, smooth motion';
-        
-        const newTask = {
-          id: taskId,
-          style: 'text-to-video',
-          styleName: styleName,
-          mode: mode,
-          status: 'pending',
-          progress: 0,
-          stage: 'queued',
-          imagePrompt: textPrompt,
-          videoPrompt: videoPrompt,
-          duration: duration,
-          imageUrl: null,
-          videoUrl: null,
-          createdAt: new Date().toISOString()
-        };
-        setTasks(prev => [newTask, ...prev]);
-        showToast('任务已提交，正在生成参考图...', 'info');
-        
-        try {
-          imageUrl = await generateImage(textPrompt);
-          newTask.imageUrl = imageUrl;
-          newTask.status = 'processing';
-          newTask.progress = 30;
-          newTask.stage = 'image_completed';
-          setTasks(prev => prev.map(t => t.id === taskId ? { ...newTask } : t));
-        } catch (err) {
-          newTask.status = 'failed';
-          newTask.error = err.message;
-          setTasks(prev => prev.map(t => t.id === taskId ? { ...newTask } : t));
-          showToast(err.message, 'error');
-          setIsGenerating(false);
-          return;
-        }
+        videoPrompt = textPrompt + ', cinematic, high quality, smooth motion';
         
       } else if (activeMode === 'image-to-video') {
         if (!selectedAsset) {
@@ -449,7 +509,23 @@ function App() {
         }
         styleName = '图生视频';
         imageUrl = selectedAsset.dataUrl;
-        videoPrompt = motionPrompt || 'subtle natural movement, cinematic, photorealistic, 24fps';
+        firstImageUrl = imageUrl;
+        videoPrompt = motionPrompt || 'subtle natural movement, cinematic lighting, smooth motion';
+        
+      } else if (activeMode === 'multi-image' || activeMode === 'keyframes') {
+        if (selectedKeyframes.length < 2) {
+          showToast(`请至少选择2张图片`, 'error');
+          setIsGenerating(false);
+          return;
+        }
+        styleName = activeMode === 'keyframes' ? '关键帧动画' : '多图视频';
+        imageUrls = selectedKeyframes.map(k => k.dataUrl);
+        firstImageUrl = imageUrls[0];
+        videoPrompt = textPrompt.trim() || (
+          activeMode === 'keyframes'
+            ? 'Smooth cinematic transition between keyframes, maintaining visual consistency, natural motion'
+            : 'Create a smooth video sequence combining the reference images, cinematic quality, natural transitions'
+        );
         
       } else {
         if (!selectedStyle) {
@@ -461,76 +537,60 @@ function App() {
         const customPrompt = textPrompt.trim();
         const imgPrompt = customPrompt ? customPrompt + ', ' + selectedStyle.imagePrompt : selectedStyle.imagePrompt;
         videoPrompt = selectedStyle.videoPrompt;
-        imageUrl = '';
-        
-        const newTask = {
-          id: taskId,
-          style: selectedStyle.id,
-          styleName: styleName,
-          mode: mode,
-          status: 'pending',
-          progress: 0,
-          stage: 'queued',
-          imagePrompt: imgPrompt,
-          videoPrompt: videoPrompt,
-          duration: duration,
-          imageUrl: null,
-          videoUrl: null,
-          createdAt: new Date().toISOString()
-        };
-        setTasks(prev => [newTask, ...prev]);
-        showToast('任务已提交，正在生成参考图...', 'info');
         
         try {
-          imageUrl = await generateImage(imgPrompt);
-          newTask.imageUrl = imageUrl;
-          newTask.status = 'processing';
-          newTask.progress = 30;
-          newTask.stage = 'image_completed';
-          setTasks(prev => prev.map(t => t.id === taskId ? { ...newTask } : t));
+          showToast('正在生成参考图...', 'info');
+          imageUrl = await generateImage(imgPrompt, sizeStr);
+          firstImageUrl = imageUrl;
         } catch (err) {
-          newTask.status = 'failed';
-          newTask.error = err.message;
-          setTasks(prev => prev.map(t => t.id === taskId ? { ...newTask } : t));
-          showToast(err.message, 'error');
+          showToast('参考图生成失败: ' + err.message, 'error');
           setIsGenerating(false);
           return;
         }
       }
 
-      if (activeMode === 'image-to-video') {
-        const newTask = {
-          id: taskId,
-          style: 'image-to-video',
-          styleName: styleName,
-          mode: mode,
-          status: 'pending',
-          progress: 0,
-          stage: 'queued',
-          imagePrompt: '',
-          videoPrompt: videoPrompt,
-          duration: duration,
-          imageUrl: imageUrl,
-          videoUrl: null,
-          createdAt: new Date().toISOString()
-        };
-        setTasks(prev => [newTask, ...prev]);
-      }
-
+      const newTask = {
+        id: taskId,
+        style: activeMode,
+        styleName: styleName,
+        mode: mode,
+        status: 'processing',
+        progress: 5,
+        stage: 'submitting',
+        imagePrompt: textPrompt,
+        videoPrompt: videoPrompt,
+        duration: duration,
+        imageUrl: firstImageUrl,
+        videoUrl: null,
+        createdAt: new Date().toISOString()
+      };
+      setTasks(prev => [newTask, ...prev]);
       showToast('正在提交视频生成任务...', 'info');
+
+      const seedNum = seed ? parseInt(seed) : null;
       
+      const result = await submitVideoGeneration({
+        prompt: videoPrompt,
+        imageUrl: imageUrl,
+        imageUrls: imageUrls,
+        mode: mode,
+        seconds: duration,
+        width: resConfig.width,
+        height: resConfig.height,
+        negativePrompt: negativePrompt,
+        seedNum: seedNum
+      });
+
       setTasks(prev => prev.map(t => {
         if (t.id === taskId) {
-          return { ...t, status: 'processing', progress: 35, stage: 'generating_video' };
-        }
-        return t;
-      }));
-      
-      const agnesTaskId = await submitVideoGeneration(videoPrompt, imageUrl, duration);
-      
-      setTasks(prev => prev.map(t => {
-        if (t.id === taskId) {
-          return { ...t, agnesTaskId, status: 'processing', progress: 40, stage: 'generating_video' };
+          return { 
+            ...t, 
+            agnesTaskId: result.taskId,
+            agnesVideoId: result.videoId,
+            status: 'processing', 
+            progress: 10, 
+            stage: 'queued' 
+          };
         }
         return t;
       }));
@@ -559,10 +619,9 @@ function App() {
   const getStatusLabel = (status, stage) => {
     if (status === 'completed') return '已完成';
     if (status === 'failed') return '失败';
-    if (status === 'pending') return '排队中';
-    if (stage === 'generating_image' || stage === 'queued') return '生成参考图';
-    if (stage === 'image_completed') return '图片已完成';
-    if (stage === 'generating_video') return '生成视频中';
+    if (stage === 'queued' || status === 'pending') return '排队中';
+    if (stage === 'submitting') return '提交中';
+    if (stage === 'generating_video' || status === 'processing') return '生成视频中';
     return '处理中';
   };
 
@@ -721,15 +780,28 @@ function App() {
                           <div
                             key={asset.id}
                             onClick={() => {
-                              if (asset.type === 'image') setSelectedAsset(asset);
+                              if (activeMode === 'multi-image' || activeMode === 'keyframes') {
+                                toggleKeyframe(asset);
+                              } else if (asset.type === 'image') {
+                                setSelectedAsset(asset);
+                              }
                             }}
                             className={`group relative aspect-video rounded-lg overflow-hidden cursor-pointer transition-all ${
-                              selectedAsset?.id === asset.id
+                              (activeMode === 'multi-image' || activeMode === 'keyframes')
+                                ? selectedKeyframes.find(k => k.id === asset.id)
+                                  ? 'ring-2 ring-cyan-400 ring-offset-2 ring-offset-[#0d1220]'
+                                  : 'hover:ring-1 hover:ring-white/30'
+                                : selectedAsset?.id === asset.id
                                 ? 'ring-2 ring-cyan-400 ring-offset-2 ring-offset-[#0d1220]'
                                 : 'hover:ring-1 hover:ring-white/30'
                             }`}
                           >
                             <img src={asset.dataUrl} alt={asset.name} className="w-full h-full object-cover" />
+                            {(activeMode === 'multi-image' || activeMode === 'keyframes') && selectedKeyframes.find(k => k.id === asset.id) && (
+                              <div className="absolute top-1 left-1 w-5 h-5 rounded-full bg-cyan-400 flex items-center justify-center text-[10px] font-bold text-[#0a0e1a]">
+                                {selectedKeyframes.findIndex(k => k.id === asset.id) + 1}
+                              </div>
+                            )}
                             <div className="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition-opacity flex items-end justify-end p-1">
                               <button
                                 onClick={(e) => { e.stopPropagation(); deleteAsset(asset.id); }}
@@ -850,7 +922,7 @@ function App() {
                                     onClick={async (e) => {
                                       e.stopPropagation();
                                       try {
-                                        const status = await checkVideoStatus(task.agnesTaskId);
+                                        const status = await checkVideoStatus(task.agnesVideoId, task.agnesTaskId);
                                         console.log(`🔍 手动刷新任务 ${task.id}:`, status);
                                         showToast('已刷新，查看控制台', 'info');
                                       } catch (err) {
@@ -910,7 +982,12 @@ function App() {
               )}
             </div>
             <div className="flex items-center gap-1">
-              <span className="text-[10px] text-white/30">1024 × 576</span>
+              <span className="text-[10px] text-white/30">
+                {(() => {
+                  const r = RESOLUTIONS.find(x => x.value === resolution);
+                  return r ? `${r.width} × ${r.height}` : resolution;
+                })()}
+              </span>
             </div>
           </div>
 
@@ -940,6 +1017,32 @@ function App() {
                       <p className="text-[10px] text-white/40 mt-0.5">点击右侧「生成」按钮创建视频</p>
                     </div>
                   </>
+                ) : (activeMode === 'multi-image' || activeMode === 'keyframes') && selectedKeyframes.length > 0 ? (
+                  <div className="w-full h-full bg-[#0f1420] flex items-center justify-center p-4">
+                    <div className="flex items-end gap-2 h-full">
+                      {selectedKeyframes.map((kf, idx) => (
+                        <div key={kf.id} className="flex flex-col items-center gap-1 flex-1 h-full justify-center">
+                          <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden border border-white/10">
+                            <img src={kf.dataUrl} alt="" className="w-full h-full object-cover" />
+                            <div className="absolute top-1 left-1 w-5 h-5 rounded-full bg-cyan-400 text-[10px] font-bold text-[#0a0e1a] flex items-center justify-center">
+                              {idx + 1}
+                            </div>
+                          </div>
+                          {idx < selectedKeyframes.length - 1 && (
+                            <div className="hidden sm:block absolute -right-3 top-1/2 -translate-y-1/2">
+                              <ChevronRight className="w-4 h-4 text-cyan-400/50" />
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <p className="text-xs text-white/70">
+                        {activeMode === 'keyframes' ? `${selectedKeyframes.length} 个关键帧` : `${selectedKeyframes.length} 张参考图`}
+                      </p>
+                      <p className="text-[10px] text-white/40 mt-0.5">点击右侧「生成」创建视频</p>
+                    </div>
+                  </div>
                 ) : activeMode === 'style-preset' && selectedStyle ? (
                   <>
                     <div className={`w-full h-full bg-gradient-to-br ${selectedStyle.gradient} flex items-center justify-center`}>
@@ -974,11 +1077,13 @@ function App() {
                     <p className="text-sm text-white/40 mb-1">
                       {activeMode === 'text-to-video' ? '在右侧输入视频描述' :
                        activeMode === 'image-to-video' ? '拖拽图片到此处或点击上传' :
+                       activeMode === 'multi-image' || activeMode === 'keyframes' ? '从左侧素材库选择多张图片' :
                        '从左侧选择一个风格开始创作'}
                     </p>
                     <p className="text-xs text-white/20">
                       {activeMode === 'text-to-video' ? '支持中英文描述，越详细效果越好' :
                        activeMode === 'image-to-video' ? '支持 JPG, PNG, WebP, GIF 格式' :
+                       activeMode === 'multi-image' || activeMode === 'keyframes' ? '点击素材库中的图片进行选择，至少2张' :
                        '8种电影级风格预设，一键生成大片'}
                     </p>
                   </div>
@@ -1178,16 +1283,16 @@ function App() {
                     <label className="text-[11px] text-white/50 mb-2 block font-medium">输出设置</label>
                     <div className="space-y-2">
                       <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.03] border border-white/5">
-                        <span className="text-xs text-white/60">分辨率</span>
-                        <span className="text-xs text-white/40">1024 × 576</span>
+                        <span className="text-xs text-white/60">视频模型</span>
+                        <span className="text-xs text-cyan-400">{VIDEO_MODEL}</span>
+                      </div>
+                      <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.03] border border-white/5">
+                        <span className="text-xs text-white/60">图像模型</span>
+                        <span className="text-xs text-purple-400">{IMAGE_MODEL}</span>
                       </div>
                       <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.03] border border-white/5">
                         <span className="text-xs text-white/60">帧率</span>
-                        <span className="text-xs text-white/40">24 fps</span>
-                      </div>
-                      <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.03] border border-white/5">
-                        <span className="text-xs text-white/60">模型</span>
-                        <span className="text-xs text-cyan-400">Agnes Video v2.0</span>
+                        <span className="text-xs text-white/40">{FRAME_RATE} fps</span>
                       </div>
                     </div>
                   </div>
@@ -1217,12 +1322,31 @@ function App() {
                   <div>
                     <label className="text-[11px] text-white/50 mb-2 block font-medium">生成模式</label>
                     <div className="grid grid-cols-3 gap-1.5">
-                      {MODES.map(mode => {
+                      {MODES.slice(0, 3).map(mode => {
                         const Icon = mode.icon;
                         return (
                           <button
                             key={mode.id}
-                            onClick={() => { setActiveMode(mode.id); setSelectedStyle(null); }}
+                            onClick={() => { setActiveMode(mode.id); setSelectedStyle(null); setSelectedKeyframes([]); }}
+                            className={`p-2 rounded-lg border transition-all flex flex-col items-center gap-1 ${
+                              activeMode === mode.id
+                                ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-300'
+                                : 'border-white/10 bg-white/[0.02] text-white/50 hover:border-white/20 hover:text-white/70'
+                            }`}
+                          >
+                            <Icon className="w-4 h-4" />
+                            <span className="text-[10px]">{mode.label}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                    <div className="grid grid-cols-2 gap-1.5 mt-1.5">
+                      {MODES.slice(3).map(mode => {
+                        const Icon = mode.icon;
+                        return (
+                          <button
+                            key={mode.id}
+                            onClick={() => { setActiveMode(mode.id); setSelectedStyle(null); setSelectedKeyframes([]); }}
                             className={`p-2 rounded-lg border transition-all flex flex-col items-center gap-1 ${
                               activeMode === mode.id
                                 ? 'border-cyan-500/50 bg-cyan-500/10 text-cyan-300'
@@ -1286,6 +1410,58 @@ function App() {
                     </>
                   )}
 
+                  {(activeMode === 'multi-image' || activeMode === 'keyframes') && (
+                    <>
+                      <div>
+                        <label className="text-[11px] text-white/50 mb-2 block font-medium">
+                          {activeMode === 'keyframes' ? '关键帧图片' : '参考图片'}
+                          <span className="text-white/30 ml-2">
+                            已选 {selectedKeyframes.length}/6 张
+                          </span>
+                        </label>
+                        {selectedKeyframes.length > 0 ? (
+                          <div className="grid grid-cols-3 gap-1.5 mb-2">
+                            {selectedKeyframes.map((kf, idx) => (
+                              <div key={kf.id} className="relative aspect-square rounded-md overflow-hidden border border-white/10">
+                                <img src={kf.dataUrl} alt="" className="w-full h-full object-cover" />
+                                <div className="absolute top-0.5 left-0.5 w-4 h-4 rounded-full bg-cyan-400 text-[10px] font-bold text-[#0a0e1a] flex items-center justify-center">
+                                  {idx + 1}
+                                </div>
+                                <button
+                                  onClick={() => toggleKeyframe(kf)}
+                                  className="absolute top-0.5 right-0.5 w-4 h-4 rounded-full bg-black/60 hover:bg-red-500 text-white flex items-center justify-center"
+                                >
+                                  <X className="w-2.5 h-2.5" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        ) : null}
+                        <div
+                          onClick={() => { setLeftTab('assets'); }}
+                          className="aspect-[4/1] rounded-lg border border-dashed border-white/10 flex flex-col items-center justify-center cursor-pointer hover:border-white/20 hover:bg-white/[0.02] transition-all"
+                        >
+                          <Layers className="w-6 h-6 text-white/20 mb-1" />
+                          <p className="text-[11px] text-white/40">从左侧素材库点击选择图片</p>
+                        </div>
+                      </div>
+                      <div>
+                        <label className="text-[11px] text-white/50 mb-2 block font-medium">
+                          {activeMode === 'keyframes' ? '过渡描述（可选）' : '视频描述（可选）'}
+                        </label>
+                        <textarea
+                          value={textPrompt}
+                          onChange={e => setTextPrompt(e.target.value)}
+                          placeholder={activeMode === 'keyframes' 
+                            ? '描述关键帧之间的过渡效果和运动方式...'
+                            : '描述视频内容和场景转换...'
+                          }
+                          className="w-full h-20 px-3 py-2 rounded-lg bg-white/[0.03] border border-white/10 text-white/80 text-xs placeholder-white/20 focus:outline-none focus:border-cyan-500/50 focus:ring-1 focus:ring-cyan-500/20 resize-none"
+                        />
+                      </div>
+                    </>
+                  )}
+
                   {activeMode === 'style-preset' && (
                     <div>
                       <label className="text-[11px] text-white/50 mb-2 block font-medium">当前风格</label>
@@ -1337,6 +1513,53 @@ function App() {
                           {d.label}
                         </button>
                       ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] text-white/50 mb-2 block font-medium">分辨率</label>
+                    <div className="grid grid-cols-3 gap-1.5">
+                      {RESOLUTIONS.map(r => (
+                        <button
+                          key={r.value}
+                          onClick={() => setResolution(r.value)}
+                          className={`py-2 rounded-lg text-[10px] font-medium transition-all ${
+                            resolution === r.value
+                              ? 'bg-gradient-to-r from-cyan-500/20 to-purple-500/20 text-cyan-300 border border-cyan-500/30'
+                              : 'bg-white/[0.03] text-white/50 border border-white/10 hover:border-white/20 hover:text-white/70'
+                          }`}
+                        >
+                          {r.value}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="text-[11px] text-white/50 mb-2 block font-medium flex items-center justify-between">
+                      <span>高级设置</span>
+                    </label>
+                    <div className="space-y-2">
+                      <div>
+                        <label className="text-[10px] text-white/40 mb-1 block">反向提示词（可选）</label>
+                        <input
+                          type="text"
+                          value={negativePrompt}
+                          onChange={e => setNegativePrompt(e.target.value)}
+                          placeholder="避免出现的内容..."
+                          className="w-full px-2.5 py-1.5 rounded-md bg-white/[0.03] border border-white/10 text-white/70 text-[11px] placeholder-white/20 focus:outline-none focus:border-cyan-500/50"
+                        />
+                      </div>
+                      <div>
+                        <label className="text-[10px] text-white/40 mb-1 block">随机种子（可选）</label>
+                        <input
+                          type="text"
+                          value={seed}
+                          onChange={e => setSeed(e.target.value.replace(/[^0-9]/g, ''))}
+                          placeholder="留空随机生成"
+                          className="w-full px-2.5 py-1.5 rounded-md bg-white/[0.03] border border-white/10 text-white/70 text-[11px] placeholder-white/20 focus:outline-none focus:border-cyan-500/50 font-mono"
+                        />
+                      </div>
                     </div>
                   </div>
 
