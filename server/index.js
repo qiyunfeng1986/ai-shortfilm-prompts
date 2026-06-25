@@ -3,13 +3,13 @@ const cors = require('cors');
 const axios = require('axios');
 const fs = require('fs');
 const path = require('path');
-const { v4: uuidv4 } = require('uuid');
+const multer = require('multer');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: '50mb' }));
 
 const AGNES_BASE_URL = 'https://apihub.agnes-ai.com/v1';
 const AGNES_API_KEY = process.env.AGNES_API_KEY || 'sk-kQmnO4IsMZ8c8dcBCQ5oJbElDYqy05rUPM9TUAp48QpRt3Bw';
@@ -17,10 +17,39 @@ const AGNES_API_KEY = process.env.AGNES_API_KEY || 'sk-kQmnO4IsMZ8c8dcBCQ5oJbElD
 const UPLOAD_DIR = path.join(__dirname, '..', 'uploads');
 const VIDEOS_DIR = path.join(UPLOAD_DIR, 'videos');
 const IMAGES_DIR = path.join(UPLOAD_DIR, 'images');
+const ASSETS_DIR = path.join(UPLOAD_DIR, 'assets');
+const SCRIPTS_DIR = path.join(UPLOAD_DIR, 'scripts');
 
 if (!fs.existsSync(UPLOAD_DIR)) fs.mkdirSync(UPLOAD_DIR, { recursive: true });
 if (!fs.existsSync(VIDEOS_DIR)) fs.mkdirSync(VIDEOS_DIR, { recursive: true });
 if (!fs.existsSync(IMAGES_DIR)) fs.mkdirSync(IMAGES_DIR, { recursive: true });
+if (!fs.existsSync(ASSETS_DIR)) fs.mkdirSync(ASSETS_DIR, { recursive: true });
+if (!fs.existsSync(SCRIPTS_DIR)) fs.mkdirSync(SCRIPTS_DIR, { recursive: true });
+
+const storage = multer.diskStorage({
+  destination: (req, file, cb) => {
+    cb(null, ASSETS_DIR);
+  },
+  filename: (req, file, cb) => {
+    const uniqueName = 'asset_' + Date.now() + '_' + Math.random().toString(36).substring(2, 8) + path.extname(file.originalname);
+    cb(null, uniqueName);
+  }
+});
+
+const upload = multer({
+  storage: storage,
+  limits: { fileSize: 50 * 1024 * 1024 },
+  fileFilter: (req, file, cb) => {
+    const allowedTypes = /jpeg|jpg|png|gif|webp|mp4|mov|webm/;
+    const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+    const mimetype = allowedTypes.test(file.mimetype);
+    if (extname && mimetype) {
+      return cb(null, true);
+    } else {
+      cb(new Error('只支持图片和视频文件'));
+    }
+  }
+});
 
 const STYLES = {
   wuxia: {
@@ -458,6 +487,7 @@ app.post('/api/videos/image-to-video', async (req, res) => {
       id: taskId,
       style: 'custom',
       styleName: '自定义图生视频',
+      mode: 'image-to-video',
       status: 'pending',
       progress: 0,
       stage: 'queued',
@@ -549,6 +579,206 @@ app.post('/api/videos/image-to-video', async (req, res) => {
     console.error('Image-to-video error:', error);
     res.status(500).json({ error: error.message });
   }
+});
+
+app.post('/api/videos/text-to-video', async (req, res) => {
+  try {
+    const { prompt, seconds, resolution } = req.body;
+    
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is required' });
+    }
+    
+    const taskId = 'task_' + Math.random().toString(36).substring(2, 15);
+    const duration = seconds || 5;
+    
+    const task = {
+      id: taskId,
+      style: 'text-to-video',
+      styleName: '文生视频',
+      mode: 'text-to-video',
+      status: 'pending',
+      progress: 0,
+      stage: 'queued',
+      imagePrompt: prompt,
+      videoPrompt: prompt + ', cinematic, photorealistic, 24fps, smooth motion',
+      imageSize: resolution || '1024x576',
+      duration: duration,
+      createdAt: new Date().toISOString(),
+      imageUrl: null,
+      videoUrl: null,
+      localImagePath: null,
+      localVideoPath: null,
+      size: null,
+      error: null
+    };
+    
+    tasks.set(taskId, task);
+    saveTasks();
+    
+    processTask(taskId);
+    
+    res.json({
+      id: taskId,
+      status: 'pending',
+      createdAt: task.createdAt
+    });
+    
+  } catch (error) {
+    console.error('Text-to-video error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.post('/api/assets/upload', upload.array('files', 20), (req, res) => {
+  try {
+    const files = req.files || [];
+    const uploadedAssets = files.map(file => {
+      const isImage = /\.(jpg|jpeg|png|gif|webp)$/i.test(file.originalname);
+      const isVideo = /\.(mp4|mov|webm)$/i.test(file.originalname);
+      return {
+        id: path.basename(file.filename, path.extname(file.filename)),
+        name: file.originalname,
+        filename: file.filename,
+        type: isImage ? 'image' : (isVideo ? 'video' : 'other'),
+        size: formatFileSize(file.size),
+        url: `/api/assets/${file.filename}`,
+        createdAt: new Date().toISOString()
+      };
+    });
+    
+    const assetsFile = path.join(ASSETS_DIR, 'assets.json');
+    let assets = [];
+    if (fs.existsSync(assetsFile)) {
+      try { assets = JSON.parse(fs.readFileSync(assetsFile, 'utf8')); } catch (e) {}
+    }
+    assets = [...uploadedAssets, ...assets];
+    fs.writeFileSync(assetsFile, JSON.stringify(assets, null, 2));
+    
+    res.json({ assets: uploadedAssets });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: error.message });
+  }
+});
+
+app.get('/api/assets', (req, res) => {
+  const assetsFile = path.join(ASSETS_DIR, 'assets.json');
+  let assets = [];
+  if (fs.existsSync(assetsFile)) {
+    try { assets = JSON.parse(fs.readFileSync(assetsFile, 'utf8')); } catch (e) {}
+  }
+  res.json({ assets });
+});
+
+app.delete('/api/assets/:filename', (req, res) => {
+  const { filename } = req.params;
+  const filePath = path.join(ASSETS_DIR, filename);
+  
+  if (fs.existsSync(filePath)) {
+    fs.unlinkSync(filePath);
+  }
+  
+  const assetsFile = path.join(ASSETS_DIR, 'assets.json');
+  if (fs.existsSync(assetsFile)) {
+    try {
+      let assets = JSON.parse(fs.readFileSync(assetsFile, 'utf8'));
+      assets = assets.filter(a => a.filename !== filename);
+      fs.writeFileSync(assetsFile, JSON.stringify(assets, null, 2));
+    } catch (e) {}
+  }
+  
+  res.json({ success: true });
+});
+
+app.get('/api/assets/:filename', (req, res) => {
+  const filePath = path.join(ASSETS_DIR, req.params.filename);
+  const resolvedPath = path.resolve(filePath);
+  
+  if (!resolvedPath.startsWith(path.resolve(ASSETS_DIR))) {
+    return res.status(403).json({ error: 'Forbidden' });
+  }
+  
+  if (fs.existsSync(resolvedPath)) {
+    res.sendFile(resolvedPath);
+  } else {
+    res.status(404).json({ error: 'Asset not found' });
+  }
+});
+
+app.get('/api/scripts', (req, res) => {
+  const scriptsFile = path.join(SCRIPTS_DIR, 'scripts.json');
+  let scripts = [];
+  if (fs.existsSync(scriptsFile)) {
+    try { scripts = JSON.parse(fs.readFileSync(scriptsFile, 'utf8')); } catch (e) {}
+  }
+  res.json({ scripts });
+});
+
+app.post('/api/scripts', (req, res) => {
+  const { title, description, shots } = req.body;
+  const scriptsFile = path.join(SCRIPTS_DIR, 'scripts.json');
+  
+  let scripts = [];
+  if (fs.existsSync(scriptsFile)) {
+    try { scripts = JSON.parse(fs.readFileSync(scriptsFile, 'utf8')); } catch (e) {}
+  }
+  
+  const newScript = {
+    id: 'script_' + Date.now(),
+    title: title || '未命名脚本',
+    description: description || '',
+    shots: shots || [],
+    createdAt: new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+  
+  scripts.unshift(newScript);
+  fs.writeFileSync(scriptsFile, JSON.stringify(scripts, null, 2));
+  
+  res.json({ script: newScript });
+});
+
+app.put('/api/scripts/:id', (req, res) => {
+  const { id } = req.params;
+  const { title, description, shots } = req.body;
+  const scriptsFile = path.join(SCRIPTS_DIR, 'scripts.json');
+  
+  let scripts = [];
+  if (fs.existsSync(scriptsFile)) {
+    try { scripts = JSON.parse(fs.readFileSync(scriptsFile, 'utf8')); } catch (e) {}
+  }
+  
+  const index = scripts.findIndex(s => s.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: 'Script not found' });
+  }
+  
+  scripts[index] = {
+    ...scripts[index],
+    title: title !== undefined ? title : scripts[index].title,
+    description: description !== undefined ? description : scripts[index].description,
+    shots: shots !== undefined ? shots : scripts[index].shots,
+    updatedAt: new Date().toISOString()
+  };
+  
+  fs.writeFileSync(scriptsFile, JSON.stringify(scripts, null, 2));
+  res.json({ script: scripts[index] });
+});
+
+app.delete('/api/scripts/:id', (req, res) => {
+  const { id } = req.params;
+  const scriptsFile = path.join(SCRIPTS_DIR, 'scripts.json');
+  
+  let scripts = [];
+  if (fs.existsSync(scriptsFile)) {
+    try { scripts = JSON.parse(fs.readFileSync(scriptsFile, 'utf8')); } catch (e) {}
+  }
+  
+  scripts = scripts.filter(s => s.id !== id);
+  fs.writeFileSync(scriptsFile, JSON.stringify(scripts, null, 2));
+  
+  res.json({ success: true });
 });
 
 app.listen(PORT, () => {
