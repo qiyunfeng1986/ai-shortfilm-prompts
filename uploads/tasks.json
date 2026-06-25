@@ -1,0 +1,23 @@
+[
+  {
+    "id": "task_sxrewddysg",
+    "style": "custom",
+    "styleName": "自定义图生视频",
+    "mode": "image-to-video",
+    "status": "failed",
+    "progress": 30,
+    "stage": "generating_video",
+    "imagePrompt": "",
+    "videoPrompt": "分镜一：雨夜行车 / Shot 1: Driving in the Rainy Night\n项\n中文\nEnglish\n景别\n车内中景，副驾视角拍摄驾驶员\nMedium shot, inside the car, from passenger-seat POV\n构图\n易灵风位于画面右侧，左侧是车窗雨幕和模糊的路灯光影。前挡风玻璃上雨刮器来回摆动，形成动态前景\nYi Lingfeng on the right side of frame. Left side: rain-streaked window and blurred streetlamp halos. Windshield wipers swing back and forth across the foreground.\n运镜手法\n固定机位，手持轻微浮动，模拟车辆行驶的颠簸感\nLocked-off position, handheld micro-float, simulating the bump of a moving car.\n画面内容\n易灵风坐在驾驶座上，嘴角叼着烟（没点），一手搭在方向盘上，一手轻敲节奏，嘴里吹着不成调的口哨。车外暴雨如注，路灯在雨幕中晕成一个个黄圈。T字路口的反光标识从车前掠过。他左眉尾的小痣在仪表台微光下隐约可见。\nYi Lingfeng sits in the driver's seat, an unlit cigarette in the corner of his mouth. One hand rests on the wheel, the other taps a rhythm on the door. He whistles an off-key tune. Outside, rain pours down; streetlamps bleed into yellow halos through the curtain of water. A T-junction reflective sign glides past the windshield. The small mole at his left eyebrow tail is faintly lit by dashboard glow.",
+    "imageSize": "1024x576",
+    "duration": 10,
+    "createdAt": "2026-06-25T09:30:23.537Z",
+    "imageUrl": "https://run-agent-6a3bfb03f4117149fa4fa8a9-mqt8p7xe-preview.agent-sandbox-bj-d3-gw.trae.cn/api/assets/asset_1782379807919_7aikdt.png",
+    "videoUrl": null,
+    "localImagePath": null,
+    "localVideoPath": null,
+    "size": null,
+    "error": "Request failed with status code 503",
+    "skipImageGeneration": true
+  }
+]
