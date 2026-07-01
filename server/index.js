@@ -288,43 +288,66 @@ async function processTask(taskId) {
     task.progress = 5;
     task.stage = 'generating_image';
     tasks.set(taskId, task);
+    saveTasks();
     
     const imageUrl = await generateImage(task.imagePrompt, task.imageSize);
     task.imageUrl = imageUrl;
     task.progress = 20;
     task.stage = 'image_completed';
     tasks.set(taskId, task);
+    saveTasks();
     
     const imagePath = path.join(IMAGES_DIR, `${taskId}.png`);
-    await downloadFile(imageUrl, imagePath);
-    task.localImagePath = imagePath;
+    try {
+      await downloadFile(imageUrl, imagePath);
+      task.localImagePath = imagePath;
+    } catch (e) {
+      console.warn('图片下载失败，继续使用远程URL:', e.message);
+    }
     tasks.set(taskId, task);
+    saveTasks();
     
     task.stage = 'generating_video';
     task.progress = 30;
     tasks.set(taskId, task);
+    saveTasks();
     
     const agnesTaskId = await submitVideoGeneration(task.videoPrompt, imageUrl, task.duration);
     task.agnesTaskId = agnesTaskId;
     tasks.set(taskId, task);
+    saveTasks();
     
-    const maxAttempts = 60;
+    const maxAttempts = 120;
     let attempts = 0;
+    let lastProgress = 30;
+    let stallCount = 0;
     
     while (attempts < maxAttempts) {
-      await new Promise(r => setTimeout(r, 10000));
+      await new Promise(r => setTimeout(r, 5000));
       attempts++;
       
       try {
         const status = await checkVideoStatus(agnesTaskId);
-        task.progress = 30 + Math.floor((status.progress || 0) * 0.65);
-        task.agnesStatus = status.status;
         
-        if (status.status === 'completed') {
-          task.videoUrl = status.remixed_from_video_id;
+        const statusVal = status.status || status.state || '';
+        const progressVal = status.progress !== undefined ? status.progress : 
+                           (status.progress_percent !== undefined ? status.progress_percent :
+                           (status.data?.progress !== undefined ? status.data.progress : null));
+        
+        const isCompleted = 
+          statusVal === 'completed' || statusVal === 'success' ||
+          !!status.remixed_from_video_id || !!status.video_url || !!status.url;
+        
+        const isFailed = 
+          statusVal === 'failed' || statusVal === 'error' ||
+          (status.error && status.error !== null);
+        
+        if (isCompleted) {
+          task.videoUrl = status.remixed_from_video_id || status.video_url || status.url;
           task.progress = 95;
           task.stage = 'downloading';
           tasks.set(taskId, task);
+          saveTasks();
           
           const videoPath = path.join(VIDEOS_DIR, `${taskId}.mp4`);
           await downloadFile(task.videoUrl, videoPath);
@@ -341,23 +364,54 @@ async function processTask(taskId) {
           
           saveTasks();
           return;
-        } else if (status.status === 'failed') {
-          throw new Error(status.error || 'Video generation failed');
+        } else if (isFailed) {
+          const errorMsg = (status.error && typeof status.error === 'object' && status.error.message) 
+            || (typeof status.error === 'string' ? status.error : null)
+            || status.error_msg 
+            || '视频生成失败';
+          throw new Error(errorMsg);
         }
         
+        if (progressVal !== null && typeof progressVal === 'number' && progressVal > 0) {
+          const apiProgress = Math.min(progressVal, 99);
+          task.progress = 30 + Math.floor(apiProgress * 0.65);
+          
+          if (task.progress > lastProgress) {
+            lastProgress = task.progress;
+            stallCount = 0;
+          } else {
+            stallCount++;
+          }
+        } else {
+          stallCount++;
+          if (task.progress < 95) {
+            task.progress = Math.min(task.progress + 0.5, 95);
+          }
+        }
+        
+        if (statusVal === 'queued' || statusVal === 'pending') {
+          task.stage = 'queued';
+        } else if (statusVal === 'in_progress' || statusVal === 'processing' || statusVal === 'running') {
+          task.stage = 'generating_video';
+        }
+        
+        task.agnesStatus = statusVal;
         tasks.set(taskId, task);
+        saveTasks();
       } catch (e) {
         console.error('Status check error:', e.message);
+        if (e.message?.includes('503') || e.message?.includes('502') || e.message?.includes('504')) {
+          console.log('  服务暂时不可用，继续等待...');
+        }
       }
     }
     
-    throw new Error('Timeout waiting for video generation');
+    throw new Error('视频生成超时，请稍后重试');
     
   } catch (error) {
     console.error('Task failed:', error);
     task.status = 'failed';
     task.error = error.message;
-    task.progress = 0;
     tasks.set(taskId, task);
     saveTasks();
   }
@@ -577,27 +631,53 @@ app.post('/api/videos/image-to-video', async (req, res) => {
     (async () => {
       try {
         task.status = 'processing';
-        task.progress = 30;
+        task.progress = 10;
+        task.stage = 'downloading_image';
+        tasks.set(taskId, task);
+        
+        const imagePath = path.join(IMAGES_DIR, `${taskId}.png`);
+        try {
+          await downloadFile(imageUrl, imagePath);
+          task.localImagePath = imagePath;
+          task.progress = 25;
+        } catch (e) {
+          console.warn('图片下载失败，继续使用远程URL:', e.message);
+        }
         task.stage = 'generating_video';
+        task.progress = 30;
         tasks.set(taskId, task);
         
         const agnesTaskId = await submitVideoGeneration(task.videoPrompt, imageUrl, duration);
         task.agnesTaskId = agnesTaskId;
         tasks.set(taskId, task);
         
-        const maxAttempts = 60;
+        const maxAttempts = 120;
         let attempts = 0;
+        let lastProgress = 30;
+        let stallCount = 0;
         
         while (attempts < maxAttempts) {
-          await new Promise(r => setTimeout(r, 10000));
+          await new Promise(r => setTimeout(r, 5000));
           attempts++;
           
           try {
             const status = await checkVideoStatus(agnesTaskId);
-            task.progress = 30 + Math.floor((status.progress || 0) * 0.65);
             
-            if (status.status === 'completed') {
-              task.videoUrl = status.remixed_from_video_id;
+            const statusVal = status.status || status.state || '';
+            const progressVal = status.progress !== undefined ? status.progress : 
+                               (status.progress_percent !== undefined ? status.progress_percent :
+                               (status.data?.progress !== undefined ? status.data.progress : null));
+            
+            const isCompleted = 
+              statusVal === 'completed' || statusVal === 'success' ||
+              !!status.remixed_from_video_id || !!status.video_url || !!status.url;
+            
+            const isFailed = 
+              statusVal === 'failed' || statusVal === 'error' ||
+              (status.error && status.error !== null);
+            
+            if (isCompleted) {
+              task.videoUrl = status.remixed_from_video_id || status.video_url || status.url;
               task.progress = 95;
               task.stage = 'downloading';
               tasks.set(taskId, task);
@@ -616,18 +696,50 @@ app.post('/api/videos/image-to-video', async (req, res) => {
               tasks.set(taskId, task);
               saveTasks();
               return;
-            } else if (status.status === 'failed') {
-              throw new Error(status.error || 'Video generation failed');
+            } else if (isFailed) {
+              const errorMsg = (status.error && typeof status.error === 'object' && status.error.message) 
+                || (typeof status.error === 'string' ? status.error : null)
+                || status.error_msg 
+                || '视频生成失败';
+              throw new Error(errorMsg);
+            }
+            
+            if (progressVal !== null && typeof progressVal === 'number' && progressVal > 0) {
+              const apiProgress = Math.min(progressVal, 99);
+              task.progress = 30 + Math.floor(apiProgress * 0.65);
+              
+              if (task.progress > lastProgress) {
+                lastProgress = task.progress;
+                stallCount = 0;
+              } else {
+                stallCount++;
+              }
+            } else {
+              stallCount++;
+              if (task.progress < 95) {
+                task.progress = Math.min(task.progress + 0.5, 95);
+              }
+            }
+            
+            if (statusVal === 'queued' || statusVal === 'pending') {
+              task.stage = 'queued';
+            } else if (statusVal === 'in_progress' || statusVal === 'processing' || statusVal === 'running') {
+              task.stage = 'generating_video';
             }
             
             tasks.set(taskId, task);
+            saveTasks();
           } catch (e) {
             console.error('Status check error:', e.message);
+            if (e.message?.includes('503') || e.message?.includes('502') || e.message?.includes('504')) {
+              console.log('  服务暂时不可用，继续等待...');
+            }
           }
         }
         
-        throw new Error('Timeout');
+        throw new Error('视频生成超时，请稍后重试');
       } catch (error) {
+        console.error('Task failed:', error);
         task.status = 'failed';
         task.error = error.message;
         tasks.set(taskId, task);
